@@ -1,9 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.database = exports.server = void 0;
-exports.server = {
+exports.databaseConfig = exports.serverConfig = void 0;
+//Objeto de configuración del servidor
+exports.serverConfig = {
     port: '3400'
 };
-exports.database = {
-    uri: ''
+//Objeto de configuración de la base de datos
+exports.databaseConfig = {
+    URI: "mongodb://localhost/gamersappdb"
 };

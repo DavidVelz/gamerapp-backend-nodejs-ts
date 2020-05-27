@@ -4,15 +4,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const router_1 = __importDefault(require("./server/router"));
+const config_1 = require("./config/config");
 //Inicializar el servidor
-const ex = express_1.default();
+const app = express_1.default();
 //config
-ex.set('port', process.env.PORT || 4000);
+app.set('port', process.env.PORT || config_1.serverConfig.port);
 // middlewares
-ex.use(express_1.default.json());
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: false }));
 // Routes
-ex.use('/');
+app.use(router_1.default);
 // Inicializar el servidor
-ex.listen(ex.get('port'), () => {
-    console.log(`Server on port`, ex.get('port'));
+app.listen(app.get('port'), () => {
+    console.log(`Server on port`, config_1.serverConfig.port);
 });
