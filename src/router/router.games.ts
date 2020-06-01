@@ -4,12 +4,12 @@ import userModel, { User } from '../models/user.model';
 import userRouter from '../router/router.user';
 
 class GameRouter {
-    router: Router;
-    user: User = userRouter.user;
+    router: Router;   
+    
     constructor() {
+        
         this.router = Router();
     }
-
 
     //getGames
     public async getGames(req: Request, res: Response): Promise<void> {
@@ -20,15 +20,14 @@ class GameRouter {
     }
     //getGame for id
     public async getGamesUid(req: Request, res: Response): Promise<void> {
-        const games = await gameModel.find({ uid: { $regex: req.params.uid } });
+        const games = await gameModel.find({ uid: { $regex: req.body.uid } });
         res.json({
             games
         });
     }
 
     //CreateGame
-    public async createGame(req: Request, res: Response): Promise<void> {
-        const uid :string = "5ed097838c2c833068b11c44";
+    public async createGame(req: Request, res: Response): Promise<void> {        
         const { 
             gname,
             gdescription,
@@ -37,6 +36,7 @@ class GameRouter {
             gconsole,
             grequirements,
             gauthor,
+            uid
             } = req.body;
         const game: Game = new gameModel({
             gname,
@@ -55,15 +55,35 @@ class GameRouter {
             db
         });
     }
-    
-    
+        
     //deleteGame for id
     public async deleteGame(req: Request, res: Response): Promise<void> {
-
+        try {
+            const game = await gameModel.findByIdAndDelete(req.body.gid);
+        res.json({
+            message : "Este juego fue eliminado con éxito",            
+        })
+        } catch (error) {
+            res.json({
+                messagerror : error,            
+            })
+        }
+        
     }
     //updateGame for id
     public async updateGame(req: Request, res: Response): Promise<void> {
-
+        try {
+        const game = await gameModel.findByIdAndUpdate(req.body.gid, req.body);
+        res.json({
+            message : "Este juego fue actualizado con éxito",
+            Juego : game
+        })
+        } catch (error) {
+            res.json({
+                messagerror : error               
+            })
+        }
+        
     }
 }
 

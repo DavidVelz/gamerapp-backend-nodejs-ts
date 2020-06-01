@@ -10,12 +10,12 @@
         "start": "node buid/src",
         "dev": "nodemon"
     },
-
     "keywords": [],
     "author": "Johan Holguin y David Vélez",
     "license": "ISC",
     "devDependencies": {
         "@types/express": "^4.17.6",
+        "@types/jsonwebtoken": "^8.5.0",
         "@types/mongoose": "^5.7.21",
         "@types/node": "^14.0.5",
         "morgan": "^1.10.0",

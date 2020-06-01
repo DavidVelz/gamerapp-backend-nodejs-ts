@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router_1 = __importDefault(require("./server/router"));
 const config_1 = require("./config/config");
+require('./database/connection');
 //Inicializar el servidor
 const app = express_1.default();
 //config

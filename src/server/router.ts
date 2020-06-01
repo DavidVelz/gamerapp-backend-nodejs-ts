@@ -3,7 +3,7 @@ import userModel, {User} from '../models/user.model';
 import { Routers } from '../config/config';
 import userRouter from '../router/router.user';
 import gamesRouter from '../router/router.games';
-
+import verifyToken from '../authentication/verifyToken'
 
 class GamersRoutes {
 
@@ -15,12 +15,21 @@ class GamersRoutes {
 
     
     config(): void {
+        //Perfil
         this.router.get(Routers.user, userRouter.getUser);
-        this.router.get(Routers.register, userRouter.register);        
+        //Registro
+        this.router.get(Routers.register, userRouter.register);  
+        //Nuevo juego      
         this.router.get(Routers.gamecreate, gamesRouter.createGame);
-        this.router.get(Routers.games, gamesRouter.getGames);
-        this.router.get(Routers.ugames, gamesRouter.getGamesUid);
-        //5ecdb7dcf447a31b70984bb0
+        //Todos los juegos
+        this.router.get(Routers.games, verifyToken, gamesRouter.getGames);
+        //Juegos del usuario (por id)
+        this.router.get(Routers.ugames, verifyToken, gamesRouter.getGamesUid);
+        //Eliminar Juegos (por id)
+        this.router.get(Routers.gamedelete, gamesRouter.deleteGame);
+        //Actualizar Juegos (por id)
+        this.router.get(Routers.gameupdate, gamesRouter.updateGame);
+        
 
 
 

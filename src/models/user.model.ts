@@ -1,6 +1,10 @@
 import mongoose, { model, Schema } from 'mongoose';
+const bcrypt = require('bcryptjs');
+
 
 export interface User extends mongoose.Document {
+
+    encryptPassword(upass: string): string | PromiseLike<string>;
     uname: string;
     uemail: string;
     upass: string;
@@ -14,6 +18,16 @@ const UserSchema = new Schema({
     uage: Number,
 });
 
+UserSchema.methods.encryptPassword = async (upass:string) => {
+    const salt = await bcrypt.genSalt(10);
+    return bcrypt.hash(upass, salt);
+};
+UserSchema.methods.comparePassword = async function (upass:string) {
+    return bcrypt.compare(upass, this.upass);
+};
+
 export default model<User>('User', UserSchema);
+
+
 
 

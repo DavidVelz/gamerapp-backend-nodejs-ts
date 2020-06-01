@@ -12,11 +12,14 @@ export const Routers = {
     login: "/login",
     register: "/register",
     games: "/games",
-    ugames: "/ugames/:uid",
-    user: "/user/:id",
-    gamecreate: "/gamecreate",
-    gameid: "/game/:id",
-    gamedelete: "/gamedelete/:id",
-    gameupdate: "/gameupdate/:id",
+    ugames: "/ugames",
+    user: "/user",
+    gamecreate: "/creategame",
+    gameid: "/game",
+    gamedelete: "/deletegame",
+    gameupdate: "/updategame",
+}
 
+export const secret = {
+    secret : 'usersecret'
 }
