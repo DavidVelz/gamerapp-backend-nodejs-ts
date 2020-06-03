@@ -24,6 +24,30 @@ class UserRouter {
     //Login
     login(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { uemail, upass } = req.body;
+                yield user_model_1.default.findOne({ uemail: { $regex: uemail } })
+                    .then((user) => __awaiter(this, void 0, void 0, function* () {
+                    if (user) {
+                        const equals = yield user.comparePassword(upass);
+                        if (equals) {
+                            const token = jsonwebtoken_1.default.sign({ id: user._id }, config_1.env.mysecret, {
+                                expiresIn: config_1.env.expiresIn
+                            });
+                        }
+                        else {
+                            res.json({ auth: false });
+                        }
+                    }
+                    else {
+                        res.json({ auth: false, msg: 'usuario no encontrado' });
+                    }
+                }));
+            }
+            catch (e) {
+                console.log(e);
+                res.status(500).send('There was a problem registering your user');
+            }
         });
     }
     //Register
@@ -39,8 +63,8 @@ class UserRouter {
                 });
                 user.upass = yield user.encryptPassword(upass);
                 const us = yield user.save();
-                const token = jsonwebtoken_1.default.sign({ id: user._id }, config_1.secret.secret, {
-                    expiresIn: 60 * 60 * 24 // expires in 24 hours
+                const token = jsonwebtoken_1.default.sign({ id: user._id }, config_1.env.mysecret, {
+                    expiresIn: config_1.env.expiresIn
                 });
                 res.json({ auth: true, token });
             }
@@ -56,6 +80,15 @@ class UserRouter {
             const user = yield user_model_1.default.findById(req.params.id);
             res.json({
                 user
+            });
+        });
+    }
+    //getUser
+    getUsers(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const users = yield user_model_1.default.find();
+            res.json({
+                users
             });
         });
     }

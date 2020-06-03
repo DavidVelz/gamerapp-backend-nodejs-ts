@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-import {databaseConfig} from '../config/config';
+import { env } from '../config/config';
 
-mongoose.connect(databaseConfig.URI, {
+mongoose.connect(env.uridb, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
-    .then(() => console.log('DB is connected'))
+    .then(() => console.log('Base de datos inicializada'))
     .catch(()=> console.error());

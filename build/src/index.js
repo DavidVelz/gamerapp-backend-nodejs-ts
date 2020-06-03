@@ -10,7 +10,7 @@ require('./database/connection');
 //Inicializar el servidor
 const app = express_1.default();
 //config
-app.set('port', process.env.PORT || config_1.serverConfig.port);
+app.set('port', config_1.env.port || 4000);
 // middlewares
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
@@ -18,5 +18,5 @@ app.use(express_1.default.urlencoded({ extended: false }));
 app.use(router_1.default);
 // Inicializar el servidor
 app.listen(app.get('port'), () => {
-    console.log(`Server on port`, config_1.serverConfig.port);
+    console.log(`Server on port`, config_1.env.port || 4000);
 });

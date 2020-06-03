@@ -1,10 +1,11 @@
 import mongoose, { model, Schema } from 'mongoose';
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
 
 
 export interface User extends mongoose.Document {
 
-    encryptPassword(upass: string): string | PromiseLike<string>;
+    encryptPassword(upass: string): Promise<string>;
+    comparePassword(upass: string): Promise<boolean>;
     uname: string;
     uemail: string;
     upass: string;
@@ -18,11 +19,11 @@ const UserSchema = new Schema({
     uage: Number,
 });
 
-UserSchema.methods.encryptPassword = async (upass:string) => {
+UserSchema.methods.encryptPassword = async (upass:string) : Promise<string> => {
     const salt = await bcrypt.genSalt(10);
     return bcrypt.hash(upass, salt);
 };
-UserSchema.methods.comparePassword = async function (upass:string) {
+UserSchema.methods.comparePassword = async function (upass:string): Promise<boolean> {
     return bcrypt.compare(upass, this.upass);
 };
 

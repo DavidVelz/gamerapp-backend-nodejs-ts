@@ -1,25 +1,13 @@
-//Objeto de configuración del servidor
-export const serverConfig = {
-    port: "3400"
+import dotenv from 'dotenv'; 
+dotenv.config (); 
+
+export const env = {
+  uridb:process.env.URI,
+  port:   process.env.PORT,
+  mysecret: 'usersecret',
+  expiresIn: process.env.EXPIRE_TOKEN
 }
 
-//Objeto de configuración de la base de datos
-export const databaseConfig = {
-    URI: "mongodb://localhost/gamersappdb"
-}
 
-export const Routers = {
-    login: "/login",
-    register: "/register",
-    games: "/games",
-    ugames: "/ugames",
-    user: "/user",
-    gamecreate: "/creategame",
-    gameid: "/game",
-    gamedelete: "/deletegame",
-    gameupdate: "/updategame",
-}
 
-export const secret = {
-    secret : 'usersecret'
-}
+

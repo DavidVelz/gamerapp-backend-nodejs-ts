@@ -12,21 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = require("mongoose");
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const UserSchema = new mongoose_1.Schema({
-    uname: { type: String, required: true },
-    uemail: { type: String, required: true, unique: true },
-    upass: { type: String, required: true },
-    uage: Number,
-});
-UserSchema.methods.encryptPassword = (upass) => __awaiter(void 0, void 0, void 0, function* () {
-    const salt = yield bcryptjs_1.default.genSalt(10);
-    return bcryptjs_1.default.hash(upass, salt);
-});
-UserSchema.methods.comparePassword = function (upass) {
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const config_1 = require("../config/config");
+function checkToken(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        return bcryptjs_1.default.compare(upass, this.upass);
+        const token = req.headers['x-access-token'];
+        if (!token) {
+            return res.status(401).send({ auth: false, message: 'No token provided' });
+        }
+        // Decodificar el token para obtener el id de usuario
+        const payload = yield jsonwebtoken_1.default.verify(token.toString(), config_1.env.mysecret);
+        req.body.id = payload.id;
+        next();
     });
-};
-exports.default = mongoose_1.model('User', UserSchema);
+}
+exports.default = checkToken;

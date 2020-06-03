@@ -75,8 +75,7 @@ class GameRouter {
         try {
         const game = await gameModel.findByIdAndUpdate(req.body.gid, req.body);
         res.json({
-            message : "Este juego fue actualizado con éxito",
-            Juego : game
+            message : "Este juego fue actualizado con éxito"            
         })
         } catch (error) {
             res.json({
