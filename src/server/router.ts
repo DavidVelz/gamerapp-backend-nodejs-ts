@@ -3,7 +3,8 @@ import userModel, {User} from '../models/user.model';
 import { Routers } from './routers';
 import userRouter from '../router/router.user';
 import gamesRouter from '../router/router.games';
-import checkToken from '../authentication/checkToken'
+import checkToken from '../authentication/checkToken';
+import {validateLogin, validateRegister } from '../util/validateFields';
 
 class GamersRoutes {
 
@@ -16,13 +17,13 @@ class GamersRoutes {
     
     config(): void {
         //login
-        this.router.get(Routers.login, userRouter.login);
+        this.router.get(Routers.login, validateLogin, userRouter.login);
         //usuarios
         this.router.get(Routers.users, userRouter.getUsers);
         //Perfil
         this.router.get(Routers.user,checkToken, userRouter.getUser);
         //Registro
-        this.router.get(Routers.register, userRouter.register);  
+        this.router.get(Routers.register,validateRegister, userRouter.register);  
         //Nuevo juego      
         this.router.get(Routers.gamecreate,checkToken, gamesRouter.createGame);
         //Todos los juegos

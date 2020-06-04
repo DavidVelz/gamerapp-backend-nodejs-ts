@@ -8,6 +8,7 @@ const routers_1 = require("./routers");
 const router_user_1 = __importDefault(require("../router/router.user"));
 const router_games_1 = __importDefault(require("../router/router.games"));
 const checkToken_1 = __importDefault(require("../authentication/checkToken"));
+const validateFields_1 = require("../util/validateFields");
 class GamersRoutes {
     constructor() {
         this.router = express_1.Router();
@@ -15,23 +16,23 @@ class GamersRoutes {
     }
     config() {
         //login
-        this.router.get(routers_1.Routers.login, router_user_1.default.login);
+        this.router.get(routers_1.Routers.login, validateFields_1.validateLogin, router_user_1.default.login);
         //usuarios
         this.router.get(routers_1.Routers.users, router_user_1.default.getUsers);
         //Perfil
-        this.router.get(routers_1.Routers.user, router_user_1.default.getUser);
+        this.router.get(routers_1.Routers.user, checkToken_1.default, router_user_1.default.getUser);
         //Registro
-        this.router.get(routers_1.Routers.register, router_user_1.default.register);
+        this.router.get(routers_1.Routers.register, validateFields_1.validateRegister, router_user_1.default.register);
         //Nuevo juego      
-        this.router.get(routers_1.Routers.gamecreate, router_games_1.default.createGame);
+        this.router.get(routers_1.Routers.gamecreate, checkToken_1.default, router_games_1.default.createGame);
         //Todos los juegos
         this.router.get(routers_1.Routers.games, checkToken_1.default, router_games_1.default.getGames);
         //Juegos del usuario (por id)
         this.router.get(routers_1.Routers.ugames, checkToken_1.default, router_games_1.default.getGamesUid);
         //Eliminar Juegos (por id)
-        this.router.get(routers_1.Routers.gamedelete, router_games_1.default.deleteGame);
+        this.router.get(routers_1.Routers.gamedelete, checkToken_1.default, router_games_1.default.deleteGame);
         //Actualizar Juegos (por id)
-        this.router.get(routers_1.Routers.gameupdate, router_games_1.default.updateGame);
+        this.router.get(routers_1.Routers.gameupdate, checkToken_1.default, router_games_1.default.updateGame);
     }
 }
 class routers {

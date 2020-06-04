@@ -16,14 +16,21 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = require("../config/config");
 function checkToken(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        const token = req.headers['x-access-token'];
-        if (!token) {
-            return res.status(401).send({ auth: false, message: 'No token provided' });
+        try {
+            const tokenString = req.headers.authorization;
+            const token = tokenString.split(" ")[1];
+            if (!token) {
+                return res.status(401).send({ auth: false, message: 'No token provided' });
+            }
+            // Decodificar el token para obtener el id de usuario
+            const decoded = yield jsonwebtoken_1.default.verify(token, config_1.env.mysecret);
+            req.body.id = decoded.id;
+            next();
         }
-        // Decodificar el token para obtener el id de usuario
-        const payload = yield jsonwebtoken_1.default.verify(token.toString(), config_1.env.mysecret);
-        req.body.id = payload.id;
-        next();
+        catch (e) {
+            console.log(e);
+            res.status(500).send('There was a problem registering your user');
+        }
     });
 }
 exports.default = checkToken;

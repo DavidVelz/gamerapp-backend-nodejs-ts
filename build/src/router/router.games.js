@@ -79,8 +79,7 @@ class GameRouter {
             try {
                 const game = yield game_model_1.default.findByIdAndUpdate(req.body.gid, req.body);
                 res.json({
-                    message: "Este juego fue actualizado con éxito",
-                    Juego: game
+                    message: "Este juego fue actualizado con éxito"
                 });
             }
             catch (error) {

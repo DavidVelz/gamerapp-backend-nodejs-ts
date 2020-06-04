@@ -16,7 +16,7 @@ const express_1 = require("express");
 const user_model_1 = __importDefault(require("../models/user.model"));
 const config_1 = require("../config/config");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const user = require('../models/user.model');
+const users = require('../models/user.model');
 class UserRouter {
     constructor() {
         this.router = express_1.Router();
@@ -30,10 +30,12 @@ class UserRouter {
                     .then((user) => __awaiter(this, void 0, void 0, function* () {
                     if (user) {
                         const equals = yield user.comparePassword(upass);
+                        console.log(equals);
                         if (equals) {
                             const token = jsonwebtoken_1.default.sign({ id: user._id }, config_1.env.mysecret, {
                                 expiresIn: config_1.env.expiresIn
                             });
+                            res.json({ auth: true, token });
                         }
                         else {
                             res.json({ auth: false });
