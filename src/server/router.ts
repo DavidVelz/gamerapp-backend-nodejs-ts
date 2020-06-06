@@ -1,10 +1,13 @@
 import { Router } from 'express';
-import userModel, {User} from '../models/user.model';
+import userModel, { User } from '../models/user.model';
 import { Routers } from './routers';
 import userRouter from '../router/router.user';
 import gamesRouter from '../router/router.games';
 import checkToken from '../authentication/checkToken';
-import {validateLogin, validateRegister } from '../util/validateFields';
+import { validateLogin, validateRegister } from '../util/validateFields';
+import { body } from "express-validator";
+import { regexFields } from '../config/config';
+
 
 class GamersRoutes {
 
@@ -14,26 +17,41 @@ class GamersRoutes {
         this.config();
     }
 
-    
+
     config(): void {
         //login
-        this.router.get(Routers.login, validateLogin, userRouter.login);
+        this.router.get(Routers.login, [
+            body('uemail')
+                .exists()
+                .withMessage('El paramatro Uno es requerido')
+                .matches(regexFields.email, "i")
+                .withMessage('El correo no es valido')
+                .trim()
+                .escape(),
+            body('upass')
+                .exists()
+                .withMessage('El paramatro Uno es requerido')
+                .matches(regexFields.password, "i")
+                .withMessage('El correo no es valido')
+                .trim()
+                .escape(),
+        ], userRouter.login);
         //usuarios
         this.router.get(Routers.users, userRouter.getUsers);
         //Perfil
-        this.router.get(Routers.user,checkToken, userRouter.getUser);
+        this.router.get(Routers.user, checkToken, userRouter.getUser);
         //Registro
-        this.router.get(Routers.register,validateRegister, userRouter.register);  
+        this.router.get(Routers.register, validateRegister, userRouter.register);
         //Nuevo juego      
-        this.router.get(Routers.gamecreate,checkToken, gamesRouter.createGame);
+        this.router.get(Routers.gamecreate, checkToken, gamesRouter.createGame);
         //Todos los juegos
         this.router.get(Routers.games, checkToken, gamesRouter.getGames);
         //Juegos del usuario (por id)
         this.router.get(Routers.ugames, checkToken, gamesRouter.getGamesUid);
         //Eliminar Juegos (por id)
-        this.router.get(Routers.gamedelete,checkToken, gamesRouter.deleteGame);
+        this.router.get(Routers.gamedelete, checkToken, gamesRouter.deleteGame);
         //Actualizar Juegos (por id)
-        this.router.get(Routers.gameupdate,checkToken, gamesRouter.updateGame);
+        this.router.get(Routers.gameupdate, checkToken, gamesRouter.updateGame);
     }
 }
 

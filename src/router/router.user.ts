@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction, Router } from 'express';
+import { Request, Response, NextFunction, Router, Errback } from 'express';
 import userModel, { User } from '../models/user.model';
 import { env } from '../config/config';
 import jwt from 'jsonwebtoken';
 const users = require('../models/user.model');
-
+import { validationResult } from "express-validator";
 
 class UserRouter {
     router: Router;
@@ -14,27 +14,35 @@ class UserRouter {
     //Login
     public async login(req: Request, res: Response): Promise<void> {
         try {
-            const { uemail, upass } = req.body;
-            await userModel.findOne({ uemail: { $regex: uemail } })
-            .then(async (user) => {
-                if (user) {
-                    const equals = await user.comparePassword( upass );
-                    console.log(equals);
-                    if (equals) {
-                        const token = jwt.sign({ id: user._id }, env.mysecret, {
-                            expiresIn: env.expiresIn
-                        });
-                        res.json({ auth: true, token });                  
-                    }else{
-                        res.json({ auth: false});
-                    }
-                }else{
-                    res.json({ auth: false, msg : 'usuario no encontrado'});
-                }
-            });
             
+            const error = validationResult(req);
 
-            
+            if (error.isEmpty()) {
+                const { uemail, upass } = req.body;
+                await userModel.findOne({ uemail: { $regex: uemail } })
+                    .then(async (user) => {
+                        if (user) {
+                            const equals = await user.comparePassword(upass);
+                            console.log(equals);
+                            if (equals) {
+                                const token = jwt.sign({ id: user._id }, env.mysecret, {
+                                    expiresIn: env.expiresIn
+                                });
+                                res.json({ auth: true, token });
+                            } else {
+                                res.json({ auth: false });
+                            }
+                        } else {
+                            res.json({ auth: false, msg: 'usuario no encontrado' });
+                        }
+                    });
+            } else {
+                res.json({
+                    error : 'Correo o clave incorrectos'
+                })
+            }
+
+
         } catch (e) {
             console.log(e)
             res.status(500).send('There was a problem registering your user');
