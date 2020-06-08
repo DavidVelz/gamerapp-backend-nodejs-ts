@@ -9,8 +9,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateLogin = exports.validateRegister = void 0;
+exports.validateRegister = exports.validateLogin = void 0;
 const express_validator_1 = require("express-validator");
+function validateLogin(req, res, next) {
+    try {
+        const { uemail, upass } = req.body;
+        return new Promise((resolve, reject) => {
+            resolve("la validación esta mal");
+        });
+    }
+    catch (error) {
+        res.json({
+            error: error.withMessage
+        });
+    }
+}
+exports.validateLogin = validateLogin;
 function validateRegister(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const { uname, uemail, upass, uage } = req.body;
@@ -41,27 +55,8 @@ function validateRegister(req, res, next) {
                 .matches(/^[0-9]+$/, "i")
                 .withMessage('El parametro Dos debe ser numerico')
                 .trim()
-                .escape();
+                .escape(),
+            next();
     });
 }
 exports.validateRegister = validateRegister;
-function validateLogin(req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { uemail, upass } = req.body;
-        express_validator_1.body(uemail)
-            .exists()
-            .withMessage('El paramatro Uno es requerido')
-            .matches(/^[0-9]+$/, "i")
-            .withMessage('El correo no es valido')
-            .trim()
-            .escape(),
-            express_validator_1.body(upass)
-                .exists()
-                .withMessage('El paramatro Dos es requerido')
-                .matches(/^[0-9]+$/, "i")
-                .withMessage('El parametro Dos debe ser numerico')
-                .trim()
-                .escape();
-    });
-}
-exports.validateLogin = validateLogin;

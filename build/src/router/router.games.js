@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const game_model_1 = __importDefault(require("../models/game.model"));
+const path_1 = __importDefault(require("path"));
+const multer_1 = __importDefault(require("multer"));
 class GameRouter {
     constructor() {
         this.router = express_1.Router();
@@ -39,7 +41,8 @@ class GameRouter {
     //CreateGame
     createGame(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { gname, gdescription, gimage, ggender, gconsole, grequirements, gauthor, uid } = req.body;
+            const gimage = `/uploads/${req.file.originalname}`;
+            const { gname, gdescription, ggender, gconsole, grequirements, gauthor, uid, } = req.body;
             const game = new game_model_1.default({
                 gname,
                 gdescription,
@@ -55,6 +58,17 @@ class GameRouter {
             res.json({
                 db
             });
+            const storage = multer_1.default.diskStorage({
+                destination: path_1.default.join(__dirname, '../uploads'),
+                filename: (req, file, cb) => {
+                    cb(null, file.originalname);
+                }
+            });
+            const uploadImage = multer_1.default({
+                storage,
+                limits: { fileSize: 1000000 }
+            }).single('image');
+            console.log(uploadImage);
         });
     }
     //deleteGame for id

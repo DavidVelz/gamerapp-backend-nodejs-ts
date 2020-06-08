@@ -24,7 +24,7 @@ function checkToken(req, res, next) {
             }
             // Decodificar el token para obtener el id de usuario
             const decoded = yield jsonwebtoken_1.default.verify(token, config_1.env.mysecret);
-            req.body.id = decoded.id;
+            req.body.uid = decoded.id;
             next();
         }
         catch (e) {

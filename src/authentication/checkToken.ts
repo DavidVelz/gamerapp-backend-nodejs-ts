@@ -19,7 +19,7 @@ async function checkToken(req:Request, res:Response, next:NextFunction) {
         
         // Decodificar el token para obtener el id de usuario
         const decoded = await jwt.verify(token, env.mysecret) as IDecoded;    
-        req.body.id = decoded.id;    
+        req.body.uid = decoded.id;    
         next();
     } catch (e) {
         console.log(e)

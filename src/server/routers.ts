@@ -1,10 +1,13 @@
 export const Routers = {
     login: "/login",
-    register: "/register",
-    games: "/games",
-    ugames: "/ugames",
+    register: "/register",    
     user: "/user",
     users: "/users",
+    userdelete: "/deleteuser",
+    userupdate: "/updateuser",
+
+    games: "/games",
+    ugames: "/ugames",
     gamecreate: "/creategame",
     gameid: "/game",
     gamedelete: "/deletegame",
