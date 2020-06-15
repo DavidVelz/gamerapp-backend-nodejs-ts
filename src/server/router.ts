@@ -1,13 +1,11 @@
-import { Router } from 'express';
-import userModel, { User } from '../models/user.model';
+import { Router, request,NextFunction } from 'express';
 import { Routers } from './routers';
 import userRouter from '../router/router.user';
 import gamesRouter from '../router/router.games';
 import checkToken from '../authentication/checkToken';
-import { validateLogin, validateRegister } from '../util/validateFields';
-import { body } from "express-validator";
 import { regexFields } from '../util/regex';
-
+import { body } from "express-validator";
+import multer from '../util/uploadFiles'
 
 class GamersRoutes {
 
@@ -20,6 +18,24 @@ class GamersRoutes {
 
     config(): void {
         /********************USER****************************/
+
+        //login
+        this.router.get(Routers.login,           
+            body('uemail')
+                .exists()
+                .withMessage('El paramatro email es requerido')
+                .matches(regexFields.email, "i")
+                .withMessage('El correo no es valido')
+                .trim()
+                .escape(),
+            body('upass')
+                .exists()
+                .withMessage('El paramatro password es requerido')
+                .matches(regexFields.password, "i")
+                .withMessage('El password no es valido')
+                .trim()
+                .escape()            
+            , userRouter.login);
         //Registro
         this.router.get(Routers.register, [
             body('uname')
@@ -43,7 +59,7 @@ class GamersRoutes {
                 .withMessage('El password no es valido')
                 .trim()
                 .escape(),
-                body('uage')
+            body('uage')
                 .exists()
                 .withMessage('El paramatro edad es requerido')
                 .matches(regexFields.age, "i")
@@ -51,23 +67,7 @@ class GamersRoutes {
                 .trim()
                 .escape(),
         ], userRouter.register);
-        //login
-        this.router.get(Routers.login, [
-            body('uemail')
-                .exists()
-                .withMessage('El paramatro email es requerido')
-                .matches(regexFields.email, "i")
-                .withMessage('El correo no es valido')
-                .trim()
-                .escape(),
-            body('upass')
-                .exists()
-                .withMessage('El paramatro password es requerido')
-                .matches(regexFields.password, "i")
-                .withMessage('El password no es valido')
-                .trim()
-                .escape()
-        ], userRouter.login);
+
         //usuarios
         this.router.get(Routers.users, userRouter.getUsers);
         //Perfil
@@ -78,7 +78,8 @@ class GamersRoutes {
         this.router.get(Routers.userupdate, checkToken, userRouter.updateUser);
         /********************GAME****************************/
         //Nuevo juego      
-        this.router.get(Routers.gamecreate, checkToken, gamesRouter.createGame);
+        this.router.get(Routers.gamecreate, checkToken,gamesRouter.createGame);              
+        
         //Todos los juegos
         this.router.get(Routers.games, checkToken, gamesRouter.getGames);
         //Juegos del usuario (por id)
@@ -87,20 +88,6 @@ class GamersRoutes {
         this.router.get(Routers.gamedelete, checkToken, gamesRouter.deleteGame);
         //Actualizar Juegos (por id)
         this.router.get(Routers.gameupdate, checkToken, gamesRouter.updateGame);
-    }
-}
-
-class routers {
-    Router = {
-        login: "/login",
-        register: "/register",
-        games: "/games",
-        ugames: "/ugames",
-        user: "/user",
-        gamecreate: "/creategame",
-        gameid: "/game",
-        gamedelete: "/deletegame",
-        gameupdate: "/updategame",
     }
 }
 

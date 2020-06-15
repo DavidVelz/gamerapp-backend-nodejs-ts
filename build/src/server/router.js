@@ -8,8 +8,8 @@ const routers_1 = require("./routers");
 const router_user_1 = __importDefault(require("../router/router.user"));
 const router_games_1 = __importDefault(require("../router/router.games"));
 const checkToken_1 = __importDefault(require("../authentication/checkToken"));
-const express_validator_1 = require("express-validator");
 const regex_1 = require("../util/regex");
+const express_validator_1 = require("express-validator");
 class GamersRoutes {
     constructor() {
         this.router = express_1.Router();
@@ -17,6 +17,20 @@ class GamersRoutes {
     }
     config() {
         /********************USER****************************/
+        //login
+        this.router.get(routers_1.Routers.login, express_validator_1.body('uemail')
+            .exists()
+            .withMessage('El paramatro email es requerido')
+            .matches(regex_1.regexFields.email, "i")
+            .withMessage('El correo no es valido')
+            .trim()
+            .escape(), express_validator_1.body('upass')
+            .exists()
+            .withMessage('El paramatro password es requerido')
+            .matches(regex_1.regexFields.password, "i")
+            .withMessage('El password no es valido')
+            .trim()
+            .escape(), router_user_1.default.login);
         //Registro
         this.router.get(routers_1.Routers.register, [
             express_validator_1.body('uname')
@@ -48,23 +62,6 @@ class GamersRoutes {
                 .trim()
                 .escape(),
         ], router_user_1.default.register);
-        //login
-        this.router.get(routers_1.Routers.login, [
-            express_validator_1.body('uemail')
-                .exists()
-                .withMessage('El paramatro email es requerido')
-                .matches(regex_1.regexFields.email, "i")
-                .withMessage('El correo no es valido')
-                .trim()
-                .escape(),
-            express_validator_1.body('upass')
-                .exists()
-                .withMessage('El paramatro password es requerido')
-                .matches(regex_1.regexFields.password, "i")
-                .withMessage('El password no es valido')
-                .trim()
-                .escape()
-        ], router_user_1.default.login);
         //usuarios
         this.router.get(routers_1.Routers.users, router_user_1.default.getUsers);
         //Perfil
@@ -84,21 +81,6 @@ class GamersRoutes {
         this.router.get(routers_1.Routers.gamedelete, checkToken_1.default, router_games_1.default.deleteGame);
         //Actualizar Juegos (por id)
         this.router.get(routers_1.Routers.gameupdate, checkToken_1.default, router_games_1.default.updateGame);
-    }
-}
-class routers {
-    constructor() {
-        this.Router = {
-            login: "/login",
-            register: "/register",
-            games: "/games",
-            ugames: "/ugames",
-            user: "/user",
-            gamecreate: "/creategame",
-            gameid: "/game",
-            gamedelete: "/deletegame",
-            gameupdate: "/updategame",
-        };
     }
 }
 const gamersroutes = new GamersRoutes();

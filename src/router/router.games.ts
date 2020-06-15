@@ -2,8 +2,8 @@ import { Request, Response, NextFunction, Router } from 'express';
 import gameModel, { Game } from '../models/game.model';
 import path from 'path';
 import multer from 'multer';
-
-
+import fs from 'fs-extra';
+import uploadImage from '../util/uploadFiles';
 class GameRouter {
     router: Router;
 
@@ -27,48 +27,43 @@ class GameRouter {
     }
 
     //CreateGame
-    public async createGame(req: Request, res: Response): Promise<void> {  
-         
-        const gimage = `/uploads/${req.file.originalname}`;
-        const {
-            gname,
-            gdescription,            
-            ggender,
-            gconsole,
-            grequirements,
-            gauthor,
-            uid,            
-        } = req.body;
-        const game: Game = new gameModel({
-            gname,
-            gdescription,
-            gimage,
-            ggender,
-            gconsole,
-            grequirements,
-            gauthor,
-            uid
-        });
+    public async createGame(req: Request, res: Response, next: NextFunction): Promise<void> {
 
-        const db = await game.save();
-        console.log();
-        res.json({
-            db
-        });
+        try {
+            const uuid = req.body.uid;
+            await uploadImage(req, res, async () => {
+                
+                const {
+                    gname,
+                    gdescription,
+                    ggender,
+                    gconsole,
+                    grequirements,
+                    gauthor
+                } = req.body;
 
-        const storage = multer.diskStorage({
-            destination: path.join(__dirname, '../uploads'),
-            filename:  (req, file, cb) => {
-                cb(null, file.originalname);
-            }
-        })
-        const uploadImage = multer({
-            storage,
-            limits: {fileSize: 1000000}
-        }).single('image');
+                const gimage = `/uploads/${req.file.originalname}`;
+                
+                const game: Game = new gameModel({
+                    gname,
+                    gdescription,
+                    ggender,
+                    gconsole,
+                    grequirements,
+                    gauthor,
+                    gimage,
+                    uuid
+                });
 
-        console.log(uploadImage);
-
+                const db = await game.save();                
+                res.json({
+                    game: db
+                });
+            });
+           
+        } catch (error) {
+            res.json({ error: error })
+        }
     }
 
     //deleteGame for id

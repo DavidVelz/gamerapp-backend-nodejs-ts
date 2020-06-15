@@ -1,62 +1,15 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateRegister = exports.validateLogin = void 0;
 const express_validator_1 = require("express-validator");
-function validateLogin(req, res, next) {
-    try {
-        const { uemail, upass } = req.body;
-        return new Promise((resolve, reject) => {
-            resolve("la validación esta mal");
-        });
-    }
-    catch (error) {
-        res.json({
-            error: error.withMessage
-        });
-    }
+const regex_1 = require("./regex");
+require("express-validator");
+function validateEmail(username) {
+    return express_validator_1.body(username)
+        .exists()
+        .withMessage('El paramatro email es requerido')
+        .matches(regex_1.regexFields.email, "i")
+        .withMessage('El email no es valido')
+        .trim()
+        .escape();
 }
-exports.validateLogin = validateLogin;
-function validateRegister(req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { uname, uemail, upass, uage } = req.body;
-        express_validator_1.body(uname)
-            .exists()
-            .withMessage('El paramatro Uno es requerido')
-            .matches('.+@[a-zA-Z]+(\\.?[a-zA-Z]{2,3}?)\\.[a-zA-Z]{2,3}"')
-            .withMessage('El correo no es valido')
-            .trim()
-            .escape(),
-            express_validator_1.body(uemail)
-                .exists()
-                .withMessage('El paramatro Dos es requerido')
-                .matches('.+@[a-zA-Z]+(\\.?[a-zA-Z]{2,3}?)\\.[a-zA-Z]{2,3}')
-                .withMessage('El correo no es valido')
-                .trim()
-                .escape(),
-            express_validator_1.body(upass)
-                .exists()
-                .withMessage('El paramatro Dos es requerido')
-                .matches(/^[0-9]+$/, "i")
-                .withMessage('El parametro Dos debe ser numerico')
-                .trim()
-                .escape(),
-            express_validator_1.body(uage)
-                .exists()
-                .withMessage('El paramatro Dos es requerido')
-                .matches(/^[0-9]+$/, "i")
-                .withMessage('El parametro Dos debe ser numerico')
-                .trim()
-                .escape(),
-            next();
-    });
-}
-exports.validateRegister = validateRegister;
+exports.default = validateEmail;
