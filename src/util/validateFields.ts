@@ -1,5 +1,5 @@
 import { body, ValidationChain } from "express-validator";
-import { regexFields } from "./regex";
+import { regexFields } from "./utilities";
 import 'express-validator';
 
 declare module 'express-validator' {

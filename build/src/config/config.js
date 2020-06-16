@@ -10,5 +10,6 @@ exports.env = {
     uridb: process.env.URI,
     port: process.env.PORT,
     mysecret: 'usersecret',
-    expiresIn: process.env.EXPIRE_TOKEN
+    expiresIn: process.env.EXPIRE_TOKEN,
+    desUpload: process.env.DESTINATION_UPLOAD
 };

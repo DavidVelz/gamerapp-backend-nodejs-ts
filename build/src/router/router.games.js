@@ -14,7 +14,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const game_model_1 = __importDefault(require("../models/game.model"));
-const uploadFiles_1 = __importDefault(require("../util/uploadFiles"));
+const multerUpload_1 = __importDefault(require("../util/multerUpload"));
+const multerValidation_1 = __importDefault(require("../util/multerValidation"));
+const utilities_1 = require("../util/utilities");
+const file_type_1 = __importDefault(require("file-type"));
 class GameRouter {
     constructor() {
         this.router = express_1.Router();
@@ -41,26 +44,34 @@ class GameRouter {
     createGame(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield uploadFiles_1.default(req, res, () => __awaiter(this, void 0, void 0, function* () {
-                    const { gname, gdescription, ggender, gconsole, grequirements, gauthor, uid = '5ee2ea70bf6b0a17d851835d', } = req.body;
-                    const gimage = `/uploads/${req.file.originalname}`;
-                    console.log(gimage);
-                    console.log(uid);
-                    const game = new game_model_1.default({
-                        gname,
-                        gdescription,
-                        ggender,
-                        gconsole,
-                        grequirements,
-                        gauthor,
-                        gimage,
-                        uid
-                    });
-                    const db = yield game.save();
-                    console.log();
-                    res.json({
-                        game: db
-                    });
+                const uuid = req.body.uid;
+                multerValidation_1.default(req, res, () => __awaiter(this, void 0, void 0, function* () {
+                    const bf = yield file_type_1.default.fromBuffer(req.file.buffer);
+                    if ((bf === null || bf === void 0 ? void 0 : bf.mime) === utilities_1.extImage.png ||
+                        (bf === null || bf === void 0 ? void 0 : bf.mime) === utilities_1.extImage.jpg ||
+                        (bf === null || bf === void 0 ? void 0 : bf.mime) === utilities_1.extImage.jpeg) {
+                        multerUpload_1.default(req, res, () => __awaiter(this, void 0, void 0, function* () {
+                            const { gname, gdescription, ggender, gconsole, grequirements, gauthor } = req.body;
+                            const gimage = `/uploads/${req.file.originalname}`;
+                            const game = new game_model_1.default({
+                                gname,
+                                gdescription,
+                                ggender,
+                                gconsole,
+                                grequirements,
+                                gauthor,
+                                gimage,
+                                uuid
+                            });
+                            const db = yield game.save();
+                            res.json({
+                                game: db
+                            });
+                        }));
+                    }
+                    else {
+                        res.json({ error: "Archivo no permitido" });
+                    }
                 }));
             }
             catch (error) {

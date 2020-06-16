@@ -8,7 +8,7 @@ const routers_1 = require("./routers");
 const router_user_1 = __importDefault(require("../router/router.user"));
 const router_games_1 = __importDefault(require("../router/router.games"));
 const checkToken_1 = __importDefault(require("../authentication/checkToken"));
-const regex_1 = require("../util/regex");
+const utilities_1 = require("../util/utilities");
 const express_validator_1 = require("express-validator");
 class GamersRoutes {
     constructor() {
@@ -21,13 +21,13 @@ class GamersRoutes {
         this.router.get(routers_1.Routers.login, express_validator_1.body('uemail')
             .exists()
             .withMessage('El paramatro email es requerido')
-            .matches(regex_1.regexFields.email, "i")
+            .matches(utilities_1.regexFields.email, "i")
             .withMessage('El correo no es valido')
             .trim()
             .escape(), express_validator_1.body('upass')
             .exists()
             .withMessage('El paramatro password es requerido')
-            .matches(regex_1.regexFields.password, "i")
+            .matches(utilities_1.regexFields.password, "i")
             .withMessage('El password no es valido')
             .trim()
             .escape(), router_user_1.default.login);
@@ -36,28 +36,28 @@ class GamersRoutes {
             express_validator_1.body('uname')
                 .exists()
                 .withMessage('El paramatro nombre es requerido')
-                .matches(regex_1.regexFields.name, "i")
+                .matches(utilities_1.regexFields.name, "i")
                 .withMessage('El nombre no es valido')
                 .trim()
                 .escape(),
             express_validator_1.body('uemail')
                 .exists()
                 .withMessage('El paramatro email es requerido')
-                .matches(regex_1.regexFields.email, "i")
+                .matches(utilities_1.regexFields.email, "i")
                 .withMessage('El correo no es valido')
                 .trim()
                 .escape(),
             express_validator_1.body('upass')
                 .exists()
                 .withMessage('El paramatro password es requerido')
-                .matches(regex_1.regexFields.password, "i")
+                .matches(utilities_1.regexFields.password, "i")
                 .withMessage('El password no es valido')
                 .trim()
                 .escape(),
             express_validator_1.body('uage')
                 .exists()
                 .withMessage('El paramatro edad es requerido')
-                .matches(regex_1.regexFields.age, "i")
+                .matches(utilities_1.regexFields.age, "i")
                 .withMessage('La edad no es valida')
                 .trim()
                 .escape(),

@@ -4,3 +4,9 @@ export const regexFields = {
   password: /^(?=.*\d)(?=.*[\u0021-\u002b\u003c-\u0040])(?=.*[A-Z])(?=.*[a-z])\S{8,16}$/,
   age:"^([1-9][0-9]?|)$"
 }
+
+export const extImage = {
+  png: "image/png",
+  jpg: "image/jpg",    
+  jpeg: "image/jpeg"  
+}

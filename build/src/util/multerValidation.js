@@ -8,19 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const jwt = require('jsonwebtoken');
-const config = require('../config');
-function verifyToken(req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const token = req.headers['x-access-token'];
-        if (!token) {
-            return res.status(401).send({ auth: false, message: 'No token provided' });
-        }
-        // Decode the Tokenreq.userId = decoded.id;
-        const decoded = yield jwt.verify(token, config.secret);
-        req.body.uid = decoded.id;
-        next();
-    });
-}
-exports.default = verifyToken;
+const multer_1 = __importDefault(require("multer"));
+const config_1 = require("../config/config");
+const storages = multer_1.default.diskStorage({
+    destination: config_1.env.desUpload,
+    filename: (req, file, cb) => __awaiter(void 0, void 0, void 0, function* () {
+        var buffer = new Buffer(req.file.buffer);
+        //cb(null, file.originalname);
+    })
+});
+exports.default = multer_1.default({
+    storage: multer_1.default.memoryStorage()
+}).single("gimage");

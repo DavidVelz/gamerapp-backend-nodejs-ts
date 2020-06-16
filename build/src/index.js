@@ -21,6 +21,10 @@ app.use(express_1.default.urlencoded({ extended: false }));
 app.use(router_1.default);
 // Static files
 app.use('/uploads', express_1.default.static(path_1.default.resolve('uploads')));
+app.use(function (err, req, res, next) {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
 // Inicializar el servidor
 app.listen(app.get('port'), () => {
     console.log(`Server on port`, config_1.env.port || 4000);
