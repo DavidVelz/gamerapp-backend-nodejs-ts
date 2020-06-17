@@ -10,6 +10,7 @@ const router_games_1 = __importDefault(require("../router/router.games"));
 const checkToken_1 = __importDefault(require("../authentication/checkToken"));
 const utilities_1 = require("../util/utilities");
 const express_validator_1 = require("express-validator");
+const prueba_1 = __importDefault(require("../router/prueba"));
 class GamersRoutes {
     constructor() {
         this.router = express_1.Router();
@@ -72,7 +73,7 @@ class GamersRoutes {
         this.router.get(routers_1.Routers.userupdate, checkToken_1.default, router_user_1.default.updateUser);
         /********************GAME****************************/
         //Nuevo juego      
-        this.router.get(routers_1.Routers.gamecreate, checkToken_1.default, router_games_1.default.createGame);
+        this.router.get(routers_1.Routers.gamecreate, checkToken_1.default, prueba_1.default, router_games_1.default.createGame);
         //Todos los juegos
         this.router.get(routers_1.Routers.games, checkToken_1.default, router_games_1.default.getGames);
         //Juegos del usuario (por id)

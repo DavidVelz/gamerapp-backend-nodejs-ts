@@ -4,9 +4,13 @@ import path from 'path'
 import multer from 'multer'
 import fs from 'fs-extra'
 import uploadImage from '../util/multerUpload'
-import validationImage from '../util/multerUpload'
+import validationImage from '../util/multerValidation'
 import filetype from 'file-type';
 import { extImage } from '../util/utilities'
+
+import fileUpload from 'express-fileupload';
+
+
 class GameRouter {
     router: Router;
 
@@ -31,20 +35,31 @@ class GameRouter {
 
     //CreateGame
     public async createGame(req: Request, res: Response, next: NextFunction): Promise<void> {
-
         try {
+            /*await validationImage(req, res, async () => {
+                 const bf = await filetype.fromBuffer(req.file.buffer);
+                 if (bf?.mime != extImage.jpg ||
+                     bf?.mime != extImage.jpeg) {
+                     console.log("imagen valida");
+                 } else {
+                     res.send("error en la imagen");
+                 };
+ 
+             });*/
+
+
             const uuid = req.body;
             console.log(uuid);
             await uploadImage(req, res, async () => {
-                
-                const gname = req.body.gname[0];
-                const gdescription = req.body.gdescription[0];
-                const ggender = req.body.ggender[0];
-                const gconsole = req.body.gconsole[0];
-                const grequirements = req.body.grequirements[0];
-                const gauthor = req.body.gauthor[0];
 
-                console.log(gname[0]);
+                const {
+                    gname,
+                    gdescription,
+                    ggender,
+                    gconsole,
+                    grequirements,
+                    gauthor } = req.body;
+
                 const gimage = `/uploads/${req.file.originalname}`;
 
                 const game: Game = new gameModel({
@@ -62,12 +77,8 @@ class GameRouter {
                 res.json({
                     game: db
                 });
-                next();
+
             });
-
-            
-
-
         } catch (error) {
             res.json({ error: error })
         }

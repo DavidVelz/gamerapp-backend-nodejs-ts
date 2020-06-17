@@ -1,5 +1,5 @@
 import multer from 'multer'
 
-export default multer({     
-    storage: multer.memoryStorage()  
+export default  multer({       
+    storage: multer.memoryStorage(),   
   }).single("gimage");

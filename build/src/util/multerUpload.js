@@ -21,6 +21,5 @@ const storage = multer_1.default.diskStorage({
     })
 });
 exports.default = multer_1.default({
-    dest: config_1.env.desUpload,
     storage: storage
 }).single("gimage");

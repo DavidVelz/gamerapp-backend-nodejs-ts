@@ -5,9 +5,12 @@ import gamesRouter from '../router/router.games';
 import checkToken from '../authentication/checkToken';
 import { regexFields } from '../util/utilities';
 import { body } from "express-validator";
-import validationImage from '../util/multerValidation'
 import { extImage } from '../util/utilities'
 import filetype from 'file-type';
+import uploadImage from '../util/multerUpload'
+import validationImage from '../util/multerValidation'
+import multer from 'multer'
+import path from 'path'
 
 class GamersRoutes {
 
@@ -80,18 +83,7 @@ class GamersRoutes {
         this.router.get(Routers.userupdate, checkToken, userRouter.updateUser);
         /********************GAME****************************/
         //Nuevo juego      
-        this.router.get(Routers.gamecreate, checkToken, async (req,res,next) =>{
-            validationImage(req, res, async () => {
-                const bf = await filetype.fromBuffer(req.file.buffer);
-                if(bf?.mime != extImage.jpg ||
-                    bf?.mime != extImage.jpeg ){                     
-                    console.log("imagen valida");                    
-                }else{
-                    res.send("error en la imagen");
-                };                               
-            }); 
-            next();                  
-        },gamesRouter.createGame);              
+        this.router.get(Routers.gamecreate, checkToken,gamesRouter.createGame);              
         
         //Todos los juegos
         this.router.get(Routers.games, checkToken, gamesRouter.getGames);
