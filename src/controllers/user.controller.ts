@@ -6,12 +6,8 @@ import jwt from 'jsonwebtoken';
 const users = require('../models/user.model');
 import { validationResult } from "express-validator";
 
-class UserRouter {
-    router: Router;
-    constructor() {
-        this.router = Router();
-    }
-
+class UserController {
+    
     //Login
     public async login(req: Request, res: Response): Promise<void> {
         try {
@@ -42,7 +38,7 @@ class UserRouter {
                     });
             } else {
                 res.json({
-                    error: 'Correo o clave no son validos'
+                    errorRegex: error
                 })
             }
 
@@ -82,28 +78,52 @@ class UserRouter {
 
     //getUser
     public async getUser(req: Request, res: Response): Promise<void> {
-        const user = await userModel.findById(req.params.id);
-        res.json({
-            user
-        });
+        try {
+            const user = await userModel.findById(req.body.uid);
+            res.json({
+                user
+            });
+        } catch (error) {
+            res.json({
+                getUserError: error
+            })
+        }
+
     }
     //getUser
     public async getUsers(req: Request, res: Response): Promise<void> {
-        const users = await userModel.find();
-        res.json({
-            users
-        });
+        try {
+            const users = await userModel.find();
+            res.json({
+                users
+            });
+        } catch (error) {
+            res.json({
+                getUsersError: error
+            })
+        }
+
     }
     //Update user
     public async updateUser(req: Request, res: Response): Promise<void> {
         try {
-            await userModel.findByIdAndUpdate(req.body.uid, req.body);
+            const {uid, uname, uemail, upass, uage } = req.body;
+            var userUpdate: User = new userModel({
+                uname,
+                uemail,
+                upass,
+                uage
+            });
+            userUpdate.upass = await userUpdate.encryptPassword(req.body.upass);
+            const userUp = await userModel.findByIdAndUpdate({_id : uid},{userUpdate},{new: true});
+            
             res.json({
-                message: "Usuario actualizado con éxito"
+                message: "Usuario actualizado con éxito",
+                user: userUp
             })
         } catch (error) {
             res.json({
-                messagerror: error
+                updateError: error
             })
         }
 
@@ -120,7 +140,7 @@ class UserRouter {
             })
         } catch (error) {
             res.json({
-                messagerror: error,
+                deleteError: error,
             })
         }
 
@@ -128,5 +148,5 @@ class UserRouter {
 
 }
 
-const userRouter = new UserRouter();
-export default userRouter;
+const userController = new UserController();
+export default userController;

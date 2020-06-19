@@ -7,7 +7,7 @@ function validateEmail(username) {
     return express_validator_1.body(username)
         .exists()
         .withMessage('El paramatro email es requerido')
-        .matches(utilities_1.regexFields.email, "i")
+        .matches(utilities_1.regexField.email, "i")
         .withMessage('El email no es valido')
         .trim()
         .escape();

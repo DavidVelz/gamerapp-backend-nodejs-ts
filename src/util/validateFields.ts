@@ -1,5 +1,5 @@
 import { body, ValidationChain } from "express-validator";
-import { regexFields } from "./utilities";
+import { regexField } from "./utilities";
 import 'express-validator';
 
 declare module 'express-validator' {
@@ -12,7 +12,7 @@ function validateEmail(username: string) : ValidationChain {
   return body(username)
     .exists()
     .withMessage('El paramatro email es requerido')
-    .matches(regexFields.email, "i")
+    .matches(regexField.email, "i")
     .withMessage('El email no es valido')
     .trim()
     .escape()

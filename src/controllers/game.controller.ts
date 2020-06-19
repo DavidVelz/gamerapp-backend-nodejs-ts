@@ -1,17 +1,12 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import gameModel, { Game } from '../models/game.model'
-import path from 'path'
-import multer from 'multer'
-import fs from 'fs-extra'
 import uploadImage from '../util/multerUpload'
 import validationImage from '../util/multerValidation'
 import filetype from 'file-type';
-import { extImage } from '../util/utilities'
-
-import fileUpload from 'express-fileupload';
+import { extImage } from '../util/utilities';
 
 
-class GameRouter {
+class GameController {
     router: Router;
 
     constructor() {
@@ -36,20 +31,19 @@ class GameRouter {
     //CreateGame
     public async createGame(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            /*await validationImage(req, res, async () => {
+            await validationImage(req, res, async () => {
                  const bf = await filetype.fromBuffer(req.file.buffer);
                  if (bf?.mime != extImage.jpg ||
-                     bf?.mime != extImage.jpeg) {
-                     console.log("imagen valida");
-                 } else {
-                     res.send("error en la imagen");
-                 };
- 
-             });*/
+                    bf?.mime != extImage.jpeg) {
+                    console.log("imagen valida");
+                 } else{
+                    res.send("error en la imagen");
+                 };                 
+             });
 
 
-            const uuid = req.body;
-            console.log(uuid);
+            const {uid} = req.body;
+            
             await uploadImage(req, res, async () => {
 
                 const {
@@ -70,7 +64,7 @@ class GameRouter {
                     grequirements,
                     gauthor,
                     gimage,
-                    uuid
+                    uid
                 });
 
                 const db = await game.save();
@@ -114,5 +108,5 @@ class GameRouter {
     }
 }
 
-const gamesRouter = new GameRouter();
-export default gamesRouter;
+const gameController = new GameController();
+export default gameController;

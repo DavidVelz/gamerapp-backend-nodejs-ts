@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.extImage = exports.regexFields = void 0;
-exports.regexFields = {
+exports.Routers = exports.inputGame = exports.inputUser = exports.extImage = exports.regexField = void 0;
+exports.regexField = {
     name: "(^[A-Z]{1}[a-z]*) ?(([A-Z]{1}[a-z]*)?) ([A-Z]{1}[a-z]*) ([A-Z]{1}[a-z]*)",
     email: "^[_a-z0-9-]+(.[_a-z0-9-]+)@[a-z0-9-]+(.[a-z0-9-]+)(.[a-z]{2,4})$",
     password: /^(?=.*\d)(?=.*[\u0021-\u002b\u003c-\u0040])(?=.*[A-Z])(?=.*[a-z])\S{8,16}$/,
@@ -11,4 +11,33 @@ exports.extImage = {
     png: "image/png",
     jpg: "image/jpg",
     jpeg: "image/jpeg"
+};
+exports.inputUser = {
+    name: 'uname',
+    email: 'uemail',
+    pass: 'upass',
+    age: 'uage'
+};
+exports.inputGame = {
+    name: 'gname',
+    description: 'gdescription',
+    gender: 'ggender',
+    console: 'gconsole',
+    requirements: 'grequirements',
+    author: 'gauthor',
+    image: 'gimage',
+};
+exports.Routers = {
+    login: "/login",
+    register: "/register",
+    user: "/user",
+    users: "/users",
+    userdelete: "/deleteuser",
+    userupdate: "/updateuser",
+    games: "/games",
+    ugames: "/ugames",
+    gamecreate: "/creategame",
+    gameid: "/game",
+    gamedelete: "/deletegame",
+    gameupdate: "/updategame",
 };

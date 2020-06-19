@@ -113,5 +113,5 @@ class GameRouter {
         });
     }
 }
-const gamesRouter = new GameRouter();
-exports.default = gamesRouter;
+const gameRouter = new GameRouter();
+exports.default = gameRouter;

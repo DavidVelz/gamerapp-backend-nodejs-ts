@@ -18,7 +18,7 @@ const multerUpload_1 = __importDefault(require("../util/multerUpload"));
 const multerValidation_1 = __importDefault(require("../util/multerValidation"));
 const file_type_1 = __importDefault(require("file-type"));
 const utilities_1 = require("../util/utilities");
-class GameRouter {
+class GameController {
     constructor() {
         this.router = express_1.Router();
     }
@@ -113,5 +113,5 @@ class GameRouter {
         });
     }
 }
-const gamesRouter = new GameRouter();
-exports.default = gamesRouter;
+const gameController = new GameController();
+exports.default = gameController;

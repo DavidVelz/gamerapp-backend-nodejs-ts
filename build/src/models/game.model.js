@@ -9,6 +9,6 @@ const GameSchema = new mongoose_1.Schema({
     grequirements: { type: String, required: true },
     gauthor: String,
     gimage: String,
-    uuid: { type: String, required: true }
+    uid: { type: String, required: true }
 });
 exports.default = mongoose_1.model('Game', GameSchema);

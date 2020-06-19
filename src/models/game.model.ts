@@ -19,7 +19,7 @@ const GameSchema = new Schema({
     grequirements: { type: String, required: true },
     gauthor: String,
     gimage: String,
-    uuid : { type: String, required: true }
+    uid : { type: String, required: true }
 });
 
 export default model<Game>('Game', GameSchema);
