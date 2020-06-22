@@ -3,6 +3,7 @@ import gameController from '../controllers/game.controller';
 import checkToken from '../authentication/checkToken';
 import { body } from "express-validator";
 import { inputGame, Routers } from '../util/utilities';
+import multer from 'multer';
 
 class GameRouter {
 
@@ -14,7 +15,7 @@ class GameRouter {
 
     config(): void {
         //Nuevo Juego 
-        this.router.get(Routers.gamecreate, checkToken,
+        this.router.get(Routers.gamecreate,
             body(inputGame.name)
                 .exists()
                 .notEmpty()
@@ -54,8 +55,12 @@ class GameRouter {
                 body(inputGame.image)
                 .exists()                
                 .notEmpty()
-                .withMessage('El paramatro imagen es requerido')                
-            , gameController.createGame);
+                .withMessage('El paramatro imagen es requerido'),
+                body(inputGame.uid)
+                .exists()                
+                .notEmpty()
+                .withMessage('El paramatro uid es requerido')                           
+            ,gameController.validateImages,gameController.uploadImages,checkToken, gameController.createGame);
 
         //Todos los Juegos
         this.router.get(Routers.games, checkToken, gameController.getGames);

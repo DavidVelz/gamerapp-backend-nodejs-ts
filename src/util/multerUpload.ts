@@ -7,11 +7,11 @@ import { env } from '../config/config';
 
 const storage = multer.diskStorage({
   destination: env.desUpload,
-  filename: async (req, file, cb) => {    
-    cb(null, file.originalname);
-  }
+  filename: async (req, file, cb) => {  
+    cb(null, file.originalname);           
+  }    
 });
  
 export default multer({
-    storage: storage  
+    storage: storage
   }).single("gimage");

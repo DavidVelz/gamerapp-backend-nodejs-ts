@@ -48,7 +48,7 @@ class GameRouter {
             .escape(), express_validator_1.body(utilities_1.inputGame.image)
             .exists()
             .notEmpty()
-            .withMessage('El paramatro imagen es requerido'), game_controller_1.default.createGame);
+            .withMessage('El paramatro imagen es requerido'), game_controller_1.default.validateImage, game_controller_1.default.createGame);
         //Todos los Juegos
         this.router.get(utilities_1.Routers.games, checkToken_1.default, game_controller_1.default.getGames);
         //Juegos del Usuario (por id)

@@ -26,6 +26,7 @@ export const inputGame = {
   requirements:'grequirements',
   author:'gauthor',
   image: 'gimage',
+  uid:'uid'
 }
 
 export const Routers = {

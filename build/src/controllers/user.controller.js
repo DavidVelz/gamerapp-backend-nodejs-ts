@@ -127,9 +127,18 @@ class UserController {
     updateUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield user_model_1.default.findByIdAndUpdate(req.body.uid, req.body);
+                const { uid, uname, uemail, upass, uage } = req.body;
+                var userUpdate = new user_model_1.default({
+                    uname,
+                    uemail,
+                    upass,
+                    uage
+                });
+                userUpdate.upass = yield userUpdate.encryptPassword(req.body.upass);
+                const userUp = yield user_model_1.default.findByIdAndUpdate({ _id: uid }, { userUpdate }, { new: true });
                 res.json({
-                    message: "Usuario actualizado con éxito"
+                    message: "Usuario actualizado con éxito",
+                    user: userUp
                 });
             }
             catch (error) {

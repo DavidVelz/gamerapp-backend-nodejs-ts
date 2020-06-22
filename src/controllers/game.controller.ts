@@ -28,51 +28,61 @@ class GameController {
         });
     }
 
+    public async validateImages(req: Request, res: Response, next: NextFunction) {
+        try {            
+            await validationImage(req, res, async () => { 
+                const bf = await filetype.fromBuffer(req.file.buffer);
+                const image = bf?.mime.split("/")[0];
+                
+                if (image != 'image') {
+                    res.status(500).send('El formato del archivo no es valido');                    
+                }
+            });     
+            next()        
+        } catch (error) {
+            res.json({ error: error })
+        }
+    }
+
+    public async uploadImages(req: Request, res: Response, next: NextFunction) {
+        try {
+            uploadImage(req, res, async () => {
+            next()
+            });
+        } catch (error) {
+            res.json({ error: error })
+        }
+    }
+
     //CreateGame
     public async createGame(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            await validationImage(req, res, async () => {
-                 const bf = await filetype.fromBuffer(req.file.buffer);
-                 if (bf?.mime != extImage.jpg ||
-                    bf?.mime != extImage.jpeg) {
-                    console.log("imagen valida");
-                 } else{
-                    res.send("error en la imagen");
-                 };                 
-             });
+            const gname = req.body.gname[0];
+            const gdescription = req.body.gdescription[0];
+            const ggender = req.body.ggender[0];
+            const gconsole = req.body.gconsole[0];
+            const grequirements = req.body.grequirements[0];
+            const gauthor = req.body.gauthor[0];
+            const uid = req.body.uid;
+            const gimage = `/uploads/${req.file.originalname}`;
 
-
-            const {uid} = req.body;
-            
-            await uploadImage(req, res, async () => {
-
-                const {
-                    gname,
-                    gdescription,
-                    ggender,
-                    gconsole,
-                    grequirements,
-                    gauthor } = req.body;
-
-                const gimage = `/uploads/${req.file.originalname}`;
-
-                const game: Game = new gameModel({
-                    gname,
-                    gdescription,
-                    ggender,
-                    gconsole,
-                    grequirements,
-                    gauthor,
-                    gimage,
-                    uid
-                });
-
-                const db = await game.save();
-                res.json({
-                    game: db
-                });
-
+            const game: Game = new gameModel({
+                gname,
+                gdescription,
+                ggender,
+                gconsole,
+                grequirements,
+                gauthor,
+                gimage,
+                uid
             });
+
+            const db = await game.save();
+            res.json({
+                game: db
+            });
+
+
         } catch (error) {
             res.json({ error: error })
         }

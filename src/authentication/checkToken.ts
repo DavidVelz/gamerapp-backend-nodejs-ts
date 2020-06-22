@@ -14,16 +14,16 @@ async function checkToken(req:Request, res:Response, next:NextFunction) {
         const tokenString = req.headers.authorization as String;
         const token = tokenString.split(" ")[1];        
         if (!token) { 
-            return res.status(401).send({ auth: false, message: 'No token provided' });
+            return res.status(401).send({ auth: false, message: 'No tienes un token validos' });
         }
         
         // Decodificar el token para obtener el id de usuario
-        const decoded = await jwt.verify(token, env.mysecret) as IDecoded;    
-        req.body.uid = decoded.id;    
+        const decoded = await jwt.verify(token, env.mysecret) as IDecoded; 
+        req.body.uid = decoded.id;         
         next();
     } catch (e) {
         console.log(e)
-            res.status(500).send('There was a problem registering your user');
+            res.status(500).send('Problemas para validar un usuario');
     }   
 }
 

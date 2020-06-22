@@ -40,21 +40,26 @@ class GameController {
             });
         });
     }
+    validateImage(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield multerValidation_1.default(req, res, () => __awaiter(this, void 0, void 0, function* () {
+                const bf = yield file_type_1.default.fromBuffer(req.file.buffer);
+                if ((bf === null || bf === void 0 ? void 0 : bf.mime) != utilities_1.extImage.jpg ||
+                    (bf === null || bf === void 0 ? void 0 : bf.mime) != utilities_1.extImage.jpeg) {
+                    console.log("imagen valida");
+                }
+                else {
+                    res.send("error en la imagen");
+                }
+                ;
+            }));
+            next();
+        });
+    }
     //CreateGame
     createGame(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield multerValidation_1.default(req, res, () => __awaiter(this, void 0, void 0, function* () {
-                    const bf = yield file_type_1.default.fromBuffer(req.file.buffer);
-                    if ((bf === null || bf === void 0 ? void 0 : bf.mime) != utilities_1.extImage.jpg ||
-                        (bf === null || bf === void 0 ? void 0 : bf.mime) != utilities_1.extImage.jpeg) {
-                        console.log("imagen valida");
-                    }
-                    else {
-                        res.send("error en la imagen");
-                    }
-                    ;
-                }));
                 const { uid } = req.body;
                 yield multerUpload_1.default(req, res, () => __awaiter(this, void 0, void 0, function* () {
                     const { gname, gdescription, ggender, gconsole, grequirements, gauthor } = req.body;
