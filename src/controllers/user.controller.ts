@@ -19,8 +19,7 @@ class UserController {
                 await userModel.findOne({ uemail: { $regex: uemail } })
                     .then(async (user) => {
                         if (user) {
-                            const equals = await user.comparePassword(upass);
-                            console.log(equals);
+                            const equals = await user.comparePassword(upass);                            
                             if (equals) {
                                 const token = jwt.sign({ id: user._id }, env.mysecret, {
                                     expiresIn: env.expiresIn
@@ -41,11 +40,9 @@ class UserController {
                     errorRegex: error
                 })
             }
-
-
         } catch (e) {
             console.log(e)
-            res.status(500).send('There was a problem registering your user');
+            res.status(500).send('Problemas autenticando este usuario'); 
         }
     }
     //Register
@@ -72,7 +69,7 @@ class UserController {
             }
         } catch (e) {
             console.log(e)
-            res.status(500).send('There was a problem registering your user');
+            res.status(500).send('Problemas registrando el usuario');
         }
     }
 
@@ -115,7 +112,7 @@ class UserController {
                 uage
             });
             userUpdate.upass = await userUpdate.encryptPassword(req.body.upass);
-            const userUp = await userModel.findByIdAndUpdate({_id : uid},{userUpdate},{new: true});
+            const userUp = await userModel.findByIdAndUpdate(uid,{userUpdate},{new: true});
             
             res.json({
                 message: "Usuario actualizado con éxito",

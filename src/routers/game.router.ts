@@ -1,9 +1,9 @@
-import { Router, request, NextFunction } from 'express';
+import { Router} from 'express';
 import gameController from '../controllers/game.controller';
 import checkToken from '../authentication/checkToken';
 import { body } from "express-validator";
 import { inputGame, Routers } from '../util/utilities';
-import multer from 'multer';
+
 
 class GameRouter {
 
@@ -60,13 +60,21 @@ class GameRouter {
                 .exists()                
                 .notEmpty()
                 .withMessage('El paramatro uid es requerido')                           
-            ,gameController.validateImages,gameController.uploadImages,checkToken, gameController.createGame);
+            ,gameController.validateFile,gameController.uploadFile,checkToken, gameController.createGame);
 
         //Todos los Juegos
         this.router.get(Routers.games, checkToken, gameController.getGames);
 
         //Juegos del Usuario (por id)
         this.router.get(Routers.ugames, checkToken, gameController.getGamesUid);
+
+        //Juego (por id)
+        this.router.get(Routers.gameid, checkToken,
+        body(inputGame.gameid)
+        .exists()                
+        .notEmpty()
+        .withMessage('El paramatro game id es requerido'),
+         gameController.getGame);
 
         //Eliminar Juegos (por id)
         this.router.get(Routers.gamedelete, checkToken, gameController.deleteGame);

@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction, Router } from 'express'
 import gameModel, { Game } from '../models/game.model'
-import uploadImage from '../util/multerUpload'
-import validationImage from '../util/multerValidation'
-import filetype from 'file-type';
-import { extImage } from '../util/utilities';
-
+import uploadFile from '../util/fileUpload'
+import validationFile from '../util/fileBuffer'
+import filetype from 'file-type'
+import { extImage } from '../util/utilities'
+import {env} from '../config/config';
 
 class GameController {
     router: Router;
@@ -20,6 +20,12 @@ class GameController {
             games
         });
     }
+    public async getGame(req: Request, res: Response): Promise<void> {
+        const game = await gameModel.findById(req.body.gid);
+        res.json({
+            game
+        });
+    }
     //getGame for id
     public async getGamesUid(req: Request, res: Response): Promise<void> {
         const games = await gameModel.find({ uid: { $regex: req.body.uid } });
@@ -28,26 +34,26 @@ class GameController {
         });
     }
 
-    public async validateImages(req: Request, res: Response, next: NextFunction) {
-        try {            
-            await validationImage(req, res, async () => { 
-                const bf = await filetype.fromBuffer(req.file.buffer);
-                const image = bf?.mime.split("/")[0];
-                
+    public async validateFile(req: Request, res: Response, next: NextFunction) {
+        try {
+            validationFile(req, res, async () => {
+                const bufferFile = await filetype.fromBuffer(req.file.buffer);
+                const image = bufferFile?.mime.split("/")[0];
+
                 if (image != 'image') {
-                    res.status(500).send('El formato del archivo no es valido');                    
+                    return res.status(500).send('El formato del archivo no es valido');
                 }
-            });     
-            next()        
+            });
+            next()
         } catch (error) {
             res.json({ error: error })
         }
     }
 
-    public async uploadImages(req: Request, res: Response, next: NextFunction) {
+    public async uploadFile(req: Request, res: Response, next: NextFunction) {
         try {
-            uploadImage(req, res, async () => {
-            next()
+            uploadFile(req, res, async () => {
+                next()
             });
         } catch (error) {
             res.json({ error: error })
@@ -64,7 +70,7 @@ class GameController {
             const grequirements = req.body.grequirements[0];
             const gauthor = req.body.gauthor[0];
             const uid = req.body.uid;
-            const gimage = `/uploads/${req.file.originalname}`;
+            const gimage = `/${env.desUpload}/${req.file.originalname}`;
 
             const game: Game = new gameModel({
                 gname,
@@ -81,9 +87,8 @@ class GameController {
             res.json({
                 game: db
             });
-
-
         } catch (error) {
+            //Eliminar la imagen en caso de errores
             res.json({ error: error })
         }
     }
@@ -100,7 +105,6 @@ class GameController {
                 messagerror: error,
             })
         }
-
     }
     //updateGame for id
     public async updateGame(req: Request, res: Response): Promise<void> {
@@ -114,7 +118,6 @@ class GameController {
                 messagerror: error
             })
         }
-
     }
 }
 

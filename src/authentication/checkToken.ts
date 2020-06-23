@@ -1,8 +1,7 @@
-import { Request, Response, NextFunction, Router } from 'express';
+import { Request, Response, NextFunction} from 'express';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/config';
-import { User } from '../models/user.model';
-//import { decoded } from '../models/decoded.model';
+
 
 export interface IDecoded {
     id: string;
@@ -14,7 +13,7 @@ async function checkToken(req:Request, res:Response, next:NextFunction) {
         const tokenString = req.headers.authorization as String;
         const token = tokenString.split(" ")[1];        
         if (!token) { 
-            return res.status(401).send({ auth: false, message: 'No tienes un token validos' });
+            return res.status(401).send({ auth: false, message: 'No tienes un token valido' });
         }
         
         // Decodificar el token para obtener el id de usuario

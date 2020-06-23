@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs-extra'
 import { extImage } from './utilities'
 import { env } from '../config/config';
-
+import { inputGame } from '../util/utilities';
 
 const storage = multer.diskStorage({
   destination: env.desUpload,
@@ -14,4 +14,4 @@ const storage = multer.diskStorage({
  
 export default multer({
     storage: storage
-  }).single("gimage");
+  }).single(inputGame.image);

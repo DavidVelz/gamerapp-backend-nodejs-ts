@@ -19,6 +19,7 @@ export const inputUser = {
 }
 
 export const inputGame = {
+  gameid : 'gid',
   name: 'gname',
   description: 'gdescription',  
   gender: 'ggender',
