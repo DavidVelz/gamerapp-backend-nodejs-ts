@@ -1,12 +1,12 @@
-import { Request, Response, NextFunction, Router, Errback } from 'express';
-import userModel, { User } from '../models/user.model';
-import gameModel, { Game } from '../models/game.model';
-import { env } from '../config/config';
-import jwt from 'jsonwebtoken';
-const users = require('../models/user.model');
-import { validationResult } from "express-validator";
-
+import { Request, Response, NextFunction, Router, Errback } from 'express'
+import userModel, { User } from '../models/user.model'
+import gameModel, { Game } from '../models/game.model'
+import { env } from '../config/config'
+import jwt from 'jsonwebtoken'
+import { validationResult } from "express-validator"
+import session from 'express-session';
 class UserController {
+
     
     //Login
     public async login(req: Request, res: Response): Promise<void> {
@@ -19,12 +19,13 @@ class UserController {
                 await userModel.findOne({ uemail: { $regex: uemail } })
                     .then(async (user) => {
                         if (user) {
-                            const equals = await user.comparePassword(upass);                            
-                            if (equals) {
+                            const equals = await user.comparePassword(upass);
+                            if (equals) {                                
                                 const token = jwt.sign({ id: user._id }, env.mysecret, {
                                     expiresIn: env.expiresIn
                                 });
                                 res.json({ auth: true, token });
+
                             } else {
                                 res.json({
                                     auth: false,
@@ -42,7 +43,7 @@ class UserController {
             }
         } catch (e) {
             console.log(e)
-            res.status(500).send('Problemas autenticando este usuario'); 
+            res.status(500).send('Problemas autenticando este usuario');
         }
     }
     //Register
@@ -104,16 +105,17 @@ class UserController {
     //Update user
     public async updateUser(req: Request, res: Response): Promise<void> {
         try {
-            const {uid, uname, uemail, upass, uage } = req.body;
+            const _id = req.body.uid;
+            const { uname, uemail, upass, uage } = req.body;
             var userUpdate: User = new userModel({
+                _id,
                 uname,
                 uemail,
                 upass,
                 uage
             });
             userUpdate.upass = await userUpdate.encryptPassword(req.body.upass);
-            const userUp = await userModel.findByIdAndUpdate(uid,{userUpdate},{new: true});
-            
+            const userUp = await userModel.findByIdAndUpdate(req.body.uid, userUpdate, { new: true });
             res.json({
                 message: "Usuario actualizado con éxito",
                 user: userUp
@@ -126,6 +128,7 @@ class UserController {
 
     }
 
+    //Delete user
     public async deleteUser(req: Request, res: Response): Promise<void> {
         try {
             const user = await userModel.findByIdAndDelete(req.body.uid);
@@ -140,9 +143,18 @@ class UserController {
                 deleteError: error,
             })
         }
-
     }
 
+    public async logout(req: Request, res: Response) {
+        try {
+        
+        } catch (error) {
+            res.json({
+                deleteSession: error,
+            })
+        }
+                
+    }
 }
 
 const userController = new UserController();

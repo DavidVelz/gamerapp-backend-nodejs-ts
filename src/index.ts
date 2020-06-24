@@ -5,6 +5,7 @@ import { env } from './config/config';
 require('./database/connection');
 import path from 'path';
 import cors from 'cors';
+import session from 'express-session';
 
 //Inicializar el servidor
 const app = express();
@@ -15,7 +16,7 @@ app.set('port', env.port || 4000);
 // middlewares
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use(userController);

@@ -37,6 +37,7 @@ export const Routers = {
   users: "/users",
   userdelete: "/deleteuser",
   userupdate: "/updateuser",
+  logout: "/logout",
 
   games: "/games",
   ugames: "/ugames",

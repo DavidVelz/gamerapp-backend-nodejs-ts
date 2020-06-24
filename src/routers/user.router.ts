@@ -3,6 +3,7 @@ import { regexField, inputUser, Routers } from "../util/utilities";
 import { body } from "express-validator";
 import userController from "../controllers/user.controller";
 import checkToken from "../authentication/checkToken";
+import destroy from "../authentication/destroyToken";
 
 class UserRouter{
 
@@ -78,6 +79,9 @@ class UserRouter{
 
         //Actualizar Usuario (por id)
         this.router.get(Routers.userupdate, checkToken, userController.updateUser);
+
+        //Cerrar sesión
+        this.router.get(Routers.logout, checkToken, userController.logout);
     }
 }
 const userRouter = new UserRouter();
