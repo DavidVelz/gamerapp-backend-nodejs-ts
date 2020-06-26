@@ -16,7 +16,6 @@ const user_model_1 = __importDefault(require("../models/user.model"));
 const game_model_1 = __importDefault(require("../models/game.model"));
 const config_1 = require("../config/config");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const users = require('../models/user.model');
 const express_validator_1 = require("express-validator");
 class UserController {
     //Login
@@ -30,7 +29,6 @@ class UserController {
                         .then((user) => __awaiter(this, void 0, void 0, function* () {
                         if (user) {
                             const equals = yield user.comparePassword(upass);
-                            console.log(equals);
                             if (equals) {
                                 const token = jsonwebtoken_1.default.sign({ id: user._id }, config_1.env.mysecret, {
                                     expiresIn: config_1.env.expiresIn
@@ -57,7 +55,7 @@ class UserController {
             }
             catch (e) {
                 console.log(e);
-                res.status(500).send('There was a problem registering your user');
+                res.status(500).send('Problemas autenticando este usuario');
             }
         });
     }
@@ -87,7 +85,7 @@ class UserController {
             }
             catch (e) {
                 console.log(e);
-                res.status(500).send('There was a problem registering your user');
+                res.status(500).send('Problemas registrando el usuario');
             }
         });
     }
@@ -127,15 +125,17 @@ class UserController {
     updateUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { uid, uname, uemail, upass, uage } = req.body;
+                const _id = req.body.uid;
+                const { uname, uemail, upass, uage } = req.body;
                 var userUpdate = new user_model_1.default({
+                    _id,
                     uname,
                     uemail,
                     upass,
                     uage
                 });
                 userUpdate.upass = yield userUpdate.encryptPassword(req.body.upass);
-                const userUp = yield user_model_1.default.findByIdAndUpdate({ _id: uid }, { userUpdate }, { new: true });
+                const userUp = yield user_model_1.default.findByIdAndUpdate(req.body.uid, userUpdate, { new: true });
                 res.json({
                     message: "Usuario actualizado con éxito",
                     user: userUp
@@ -148,6 +148,7 @@ class UserController {
             }
         });
     }
+    //Delete user
     deleteUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -162,6 +163,17 @@ class UserController {
             catch (error) {
                 res.json({
                     deleteError: error,
+                });
+            }
+        });
+    }
+    logout(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+            }
+            catch (error) {
+                res.json({
+                    deleteSession: error,
                 });
             }
         });

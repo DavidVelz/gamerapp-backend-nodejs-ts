@@ -2,7 +2,7 @@ import { Router} from 'express';
 import gameController from '../controllers/game.controller';
 import checkToken from '../authentication/checkToken';
 import { body } from "express-validator";
-import { inputGame, Routers } from '../util/utilities';
+import { inputGame, Routers, regexField } from '../util/utilities';
 
 
 class GameRouter {
@@ -20,47 +20,56 @@ class GameRouter {
                 .exists()
                 .notEmpty()
                 .withMessage('El paramatro nombre del juego es requerido')
+                .matches(regexField.gname, "i")
+                .withMessage('El Nombre del juego no es valido')
                 .trim()
                 .escape(),
             body(inputGame.description)
                 .exists()
                 .notEmpty()
                 .withMessage('El paramatro descripción es requerido')
+                .matches(regexField.gdescription, "i")
+                .withMessage('La descripción no es valido')
                 .trim()
                 .escape(),
             body(inputGame.gender)
                 .exists()
                 .notEmpty()
                 .withMessage('El paramatro genero es requerido')
+                .matches(regexField.ggender, "i")
+                .withMessage('El genero no es valido')
                 .trim()
                 .escape(),
                 body(inputGame.console)
                 .exists()
                 .notEmpty()
                 .withMessage('El paramatro consola es requerido')
+                .matches(regexField.gconsole, "i")
+                .withMessage('La consola no es valida')
                 .trim()
                 .escape(),
                 body(inputGame.requirements)
                 .exists()
                 .notEmpty()
                 .withMessage('El paramatro requerimientos es requerido')
+                .matches(regexField.grequirements, "i")
+                .withMessage('Los requirements no son validos')
                 .trim()
                 .escape(),
                 body(inputGame.author)
                 .exists()
                 .notEmpty()
                 .withMessage('El paramatro autor es requerido')
+                .matches(regexField.gauthor, "i")
+                .withMessage('El autor no es valido')
                 .trim()
                 .escape(),
                 body(inputGame.image)
                 .exists()                
                 .notEmpty()
-                .withMessage('El paramatro imagen es requerido'),
-                body(inputGame.uid)
-                .exists()                
-                .notEmpty()
-                .withMessage('El paramatro uid es requerido')                           
-            ,gameController.validateFile,gameController.uploadFile,checkToken, gameController.createGame);
+                .withMessage('El paramatro imagen es requerido')
+                                         
+            ,gameController.validateFile,checkToken, gameController.createGame);
 
         //Todos los Juegos
         this.router.get(Routers.games, checkToken, gameController.getGames);

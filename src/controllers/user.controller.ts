@@ -11,7 +11,7 @@ class UserController {
     //Login
     public async login(req: Request, res: Response): Promise<void> {
         try {
-
+            console.log(JSON.stringify(req.body));
             const error = validationResult(req);
 
             if (error.isEmpty()) {

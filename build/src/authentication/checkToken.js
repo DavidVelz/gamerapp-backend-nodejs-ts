@@ -20,7 +20,7 @@ function checkToken(req, res, next) {
             const tokenString = req.headers.authorization;
             const token = tokenString.split(" ")[1];
             if (!token) {
-                return res.status(401).send({ auth: false, message: 'No token provided' });
+                return res.status(401).send({ auth: false, message: 'No tienes un token valido' });
             }
             // Decodificar el token para obtener el id de usuario
             const decoded = yield jsonwebtoken_1.default.verify(token, config_1.env.mysecret);
@@ -29,7 +29,7 @@ function checkToken(req, res, next) {
         }
         catch (e) {
             console.log(e);
-            res.status(500).send('There was a problem registering your user');
+            res.status(500).send('Problemas para validar un usuario');
         }
     });
 }

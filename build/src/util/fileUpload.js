@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const multer_1 = __importDefault(require("multer"));
 const config_1 = require("../config/config");
+const utilities_1 = require("../util/utilities");
 const storage = multer_1.default.diskStorage({
     destination: config_1.env.desUpload,
     filename: (req, file, cb) => __awaiter(void 0, void 0, void 0, function* () {
@@ -22,4 +23,4 @@ const storage = multer_1.default.diskStorage({
 });
 exports.default = multer_1.default({
     storage: storage
-}).single("gimage");
+}).single(utilities_1.inputGame.image);

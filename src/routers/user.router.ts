@@ -3,7 +3,6 @@ import { regexField, inputUser, Routers } from "../util/utilities";
 import { body } from "express-validator";
 import userController from "../controllers/user.controller";
 import checkToken from "../authentication/checkToken";
-import destroy from "../authentication/destroyToken";
 
 class UserRouter{
 

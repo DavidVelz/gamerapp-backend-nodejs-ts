@@ -14,10 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const game_model_1 = __importDefault(require("../models/game.model"));
-const multerUpload_1 = __importDefault(require("../util/multerUpload"));
-const multerValidation_1 = __importDefault(require("../util/multerValidation"));
+const fileBuffer_1 = __importDefault(require("../util/fileBuffer"));
 const file_type_1 = __importDefault(require("file-type"));
 const utilities_1 = require("../util/utilities");
+const config_1 = require("../config/config");
+const fs_1 = require("fs");
+const path_1 = __importDefault(require("path"));
+const express_validator_1 = require("express-validator");
 class GameController {
     constructor() {
         this.router = express_1.Router();
@@ -31,6 +34,14 @@ class GameController {
             });
         });
     }
+    getGame(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const game = yield game_model_1.default.findById(req.body.gid);
+            res.json({
+                game
+            });
+        });
+    }
     //getGame for id
     getGamesUid(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -40,48 +51,65 @@ class GameController {
             });
         });
     }
-    validateImage(req, res, next) {
+    validateFile(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield multerValidation_1.default(req, res, () => __awaiter(this, void 0, void 0, function* () {
-                const bf = yield file_type_1.default.fromBuffer(req.file.buffer);
-                if ((bf === null || bf === void 0 ? void 0 : bf.mime) != utilities_1.extImage.jpg ||
-                    (bf === null || bf === void 0 ? void 0 : bf.mime) != utilities_1.extImage.jpeg) {
-                    console.log("imagen valida");
+            try {
+                const error = express_validator_1.validationResult(req);
+                if (error.isEmpty()) {
+                    yield fileBuffer_1.default(req, res, () => __awaiter(this, void 0, void 0, function* () {
+                        const bufferFile = yield file_type_1.default.fromBuffer(req.file.buffer);
+                        let contentType = [utilities_1.extImage.jpeg, utilities_1.extImage.png, utilities_1.extImage.jpg];
+                        let isEquals = false;
+                        contentType.forEach((type) => {
+                            if (type === (bufferFile === null || bufferFile === void 0 ? void 0 : bufferFile.mime)) {
+                                isEquals = true;
+                                return;
+                            }
+                        });
+                        if (isEquals) {
+                            yield fs_1.promises.writeFile(path_1.default.join(process.cwd(), 'uploads', req.file.originalname), req.file.buffer);
+                        }
+                        else {
+                            return res.status(500).send('El formato del archivo no es valido');
+                        }
+                        next();
+                    }));
                 }
                 else {
-                    res.send("error en la imagen");
+                    console.log(error);
+                    res.json({ errorInput: error });
                 }
-                ;
-            }));
-            next();
+            }
+            catch (e) {
+                console.log(e);
+                res.json({ errorValidate: e });
+            }
         });
     }
     //CreateGame
     createGame(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { uid } = req.body;
-                yield multerUpload_1.default(req, res, () => __awaiter(this, void 0, void 0, function* () {
-                    const { gname, gdescription, ggender, gconsole, grequirements, gauthor } = req.body;
-                    const gimage = `/uploads/${req.file.originalname}`;
-                    const game = new game_model_1.default({
-                        gname,
-                        gdescription,
-                        ggender,
-                        gconsole,
-                        grequirements,
-                        gauthor,
-                        gimage,
-                        uid
-                    });
-                    const db = yield game.save();
-                    res.json({
-                        game: db
-                    });
-                }));
+                const { gname, gdescription, ggender, gconsole, grequirements, gauthor, uid } = req.body;
+                const gimage = `/${config_1.env.desUpload}/${req.file.originalname}`;
+                const game = new game_model_1.default({
+                    gname,
+                    gdescription,
+                    ggender,
+                    gconsole,
+                    grequirements,
+                    gauthor,
+                    gimage,
+                    uid
+                });
+                const db = yield game.save();
+                res.json({
+                    game: db
+                });
             }
             catch (error) {
-                res.json({ error: error });
+                //Eliminar la imagen en caso de errores
+                res.json({ errorDb: error });
             }
         });
     }

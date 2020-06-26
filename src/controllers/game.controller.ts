@@ -1,10 +1,12 @@
-import { Request, Response, NextFunction, Router } from 'express'
-import gameModel, { Game } from '../models/game.model'
-import uploadFile from '../util/fileUpload'
-import validationFile from '../util/fileBuffer'
-import filetype from 'file-type'
-import { extImage } from '../util/utilities'
-import {env} from '../config/config';
+import { Request, Response, NextFunction, Router } from 'express';
+import gameModel, { Game } from '../models/game.model';
+import validete from '../util/fileBuffer';
+import filetype from 'file-type';
+import { extImage } from '../util/utilities';
+import { env } from '../config/config';
+import { promises as fs } from 'fs';
+import path from 'path';
+import { validationResult } from 'express-validator';
 
 class GameController {
     router: Router;
@@ -35,41 +37,52 @@ class GameController {
     }
 
     public async validateFile(req: Request, res: Response, next: NextFunction) {
-        try {
-            validationFile(req, res, async () => {
-                const bufferFile = await filetype.fromBuffer(req.file.buffer);
-                const image = bufferFile?.mime.split("/")[0];
+        try {           
+            const error = validationResult(req);
+            if (error.isEmpty()) {
+                await validete(req, res, async () => {
+                    const bufferFile = await filetype.fromBuffer(req.file.buffer);
 
-                if (image != 'image') {
-                    return res.status(500).send('El formato del archivo no es valido');
-                }
-            });
-            next()
-        } catch (error) {
-            res.json({ error: error })
-        }
-    }
+                    let contentType: String[] = [extImage.jpeg, extImage.png, extImage.jpg];
 
-    public async uploadFile(req: Request, res: Response, next: NextFunction) {
-        try {
-            uploadFile(req, res, async () => {
-                next()
-            });
-        } catch (error) {
-            res.json({ error: error })
+                    let isEquals: Boolean = false;
+                    contentType.forEach((type) => {
+                        if (type === bufferFile?.mime) {
+                            isEquals = true;
+                            return;
+                        }
+                    });
+
+                    if (isEquals) {
+                        await fs.writeFile(path.join(process.cwd(), 'uploads', req.file.originalname), req.file.buffer);
+                    } else {
+                        return res.status(500).send('El formato del archivo no es valido');
+                    }
+                    next();
+                });
+            } else {
+                console.log(error);
+                res.json({ errorInput: error });
+            }
+        } catch (e) {
+            console.log(e);
+            res.json({ errorValidate: e });
         }
     }
 
     //CreateGame
     public async createGame(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const gname = req.body.gname[0];
-            const gdescription = req.body.gdescription[0];
-            const ggender = req.body.ggender[0];
-            const gconsole = req.body.gconsole[0];
-            const grequirements = req.body.grequirements[0];
-            const gauthor = req.body.gauthor[0];
-            const uid = req.body.uid;
+            const {
+                gname,
+                gdescription,
+                ggender,
+                gconsole,
+                grequirements,
+                gauthor,
+                uid
+            } = req.body;
+
             const gimage = `/${env.desUpload}/${req.file.originalname}`;
 
             const game: Game = new gameModel({
@@ -89,7 +102,7 @@ class GameController {
             });
         } catch (error) {
             //Eliminar la imagen en caso de errores
-            res.json({ error: error })
+            res.json({ errorDb: error })
         }
     }
 
