@@ -20,65 +20,81 @@ const utilities_1 = require("../util/utilities");
 const config_1 = require("../config/config");
 const fs_1 = require("fs");
 const path_1 = __importDefault(require("path"));
-const express_validator_1 = require("express-validator");
 class GameController {
     constructor() {
         this.router = express_1.Router();
     }
-    //getGames
+    //Devolver todos los juegos
     getGames(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const games = yield game_model_1.default.find();
-            res.json({
-                games
-            });
+            try {
+                const games = yield game_model_1.default.find();
+                res.json({
+                    games
+                });
+            }
+            catch (e) {
+                console.log(e);
+                res.json({ errorGames: e });
+            }
         });
     }
+    //Devolver un juego
     getGame(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const games = yield game_model_1.default.find({ uid: { $regex: req.body.uid } });
+                res.json({
+                    games
+                });
+            }
+            catch (e) {
+                console.log(e);
+                res.json({ errorGame: e });
+            }
             const game = yield game_model_1.default.findById(req.body.gid);
             res.json({
                 game
             });
         });
     }
-    //getGame for id
+    //Juegos por usuario
     getGamesUid(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const games = yield game_model_1.default.find({ uid: { $regex: req.body.uid } });
-            res.json({
-                games
-            });
+            try {
+                const games = yield game_model_1.default.find({ uid: { $regex: req.body.uid } });
+                res.json({
+                    games
+                });
+            }
+            catch (e) {
+                console.log(e);
+                res.json({ errorUgames: e });
+            }
         });
     }
+    //Validar content-type de la imagen y subirla al servidor
     validateFile(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const error = express_validator_1.validationResult(req);
-                if (error.isEmpty()) {
-                    yield fileBuffer_1.default(req, res, () => __awaiter(this, void 0, void 0, function* () {
-                        const bufferFile = yield file_type_1.default.fromBuffer(req.file.buffer);
-                        let contentType = [utilities_1.extImage.jpeg, utilities_1.extImage.png, utilities_1.extImage.jpg];
-                        let isEquals = false;
-                        contentType.forEach((type) => {
-                            if (type === (bufferFile === null || bufferFile === void 0 ? void 0 : bufferFile.mime)) {
-                                isEquals = true;
-                                return;
-                            }
-                        });
-                        if (isEquals) {
-                            yield fs_1.promises.writeFile(path_1.default.join(process.cwd(), 'uploads', req.file.originalname), req.file.buffer);
+                yield fileBuffer_1.default(req, res, () => __awaiter(this, void 0, void 0, function* () {
+                    const bufferFile = yield file_type_1.default.fromBuffer(req.file.buffer);
+                    let contentType = [utilities_1.extImage.jpeg, utilities_1.extImage.png, utilities_1.extImage.jpg];
+                    let isEquals = false;
+                    contentType.forEach((type) => {
+                        if (type === (bufferFile === null || bufferFile === void 0 ? void 0 : bufferFile.mime)) {
+                            isEquals = true;
+                            return;
                         }
-                        else {
-                            return res.status(500).send('El formato del archivo no es valido');
-                        }
-                        next();
-                    }));
-                }
-                else {
-                    console.log(error);
-                    res.json({ errorInput: error });
-                }
+                    });
+                    if (isEquals) {
+                        yield fs_1.promises.writeFile(path_1.default.join(process.cwd(), 'uploads', req.file.originalname), req.file.buffer);
+                    }
+                    else {
+                        return res.status(500).send('El formato del archivo no es valido');
+                    }
+                    next();
+                }));
             }
             catch (e) {
                 console.log(e);
@@ -86,7 +102,7 @@ class GameController {
             }
         });
     }
-    //CreateGame
+    //Crear juego
     createGame(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -113,11 +129,11 @@ class GameController {
             }
         });
     }
-    //deleteGame for id
+    //Eliminar juego por id
     deleteGame(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const game = yield game_model_1.default.findByIdAndDelete(req.body.gid);
+                yield game_model_1.default.findByIdAndDelete(req.body.gid);
                 res.json({
                     message: "Este juego fue eliminado con éxito",
                 });
@@ -129,13 +145,13 @@ class GameController {
             }
         });
     }
-    //updateGame for id
+    //Actualizar juego
     updateGame(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const game = yield game_model_1.default.findByIdAndUpdate(req.body.gid, req.body);
+                const game = yield game_model_1.default.findByIdAndUpdate(req.body.gid, req.body, { new: true });
                 res.json({
-                    message: "Este juego fue actualizado con éxito"
+                    game
                 });
             }
             catch (error) {

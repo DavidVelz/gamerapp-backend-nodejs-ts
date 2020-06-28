@@ -2,7 +2,7 @@ import { Router} from 'express';
 import gameController from '../controllers/game.controller';
 import checkToken from '../authentication/checkToken';
 import { body } from "express-validator";
-import { inputGame, Routers, regexField } from '../util/utilities';
+import { inputGame, Routers} from '../util/utilities';
 
 
 class GameRouter {
@@ -15,8 +15,8 @@ class GameRouter {
 
     config(): void {
         //Nuevo Juego 
-        this.router.get(Routers.gamecreate,
-            body(inputGame.name)
+        this.router.get(Routers.gamecreate, 
+            /*body(inputGame.name)
                 .exists()
                 .notEmpty()
                 .withMessage('El paramatro nombre del juego es requerido')
@@ -67,9 +67,8 @@ class GameRouter {
                 body(inputGame.image)
                 .exists()                
                 .notEmpty()
-                .withMessage('El paramatro imagen es requerido')
-                                         
-            ,gameController.validateFile,checkToken, gameController.createGame);
+                .withMessage('El paramatro imagen es requerido')*/                                         
+            gameController.validateFile,checkToken, gameController.createGame);
 
         //Todos los Juegos
         this.router.get(Routers.games, checkToken, gameController.getGames);

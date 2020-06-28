@@ -6,7 +6,6 @@ import { extImage } from '../util/utilities';
 import { env } from '../config/config';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { validationResult } from 'express-validator';
 
 class GameController {
     router: Router;
@@ -15,62 +14,79 @@ class GameController {
         this.router = Router();
     }
 
-    //getGames
+    //Devolver todos los juegos
     public async getGames(req: Request, res: Response): Promise<void> {
-        const games = await gameModel.find();
-        res.json({
-            games
-        });
+        try {
+            const games = await gameModel.find();
+            res.json({
+                games
+            });
+        } catch (e) {
+            console.log(e);
+            res.json({ errorGames: e });
+        }
     }
+
+    //Devolver un juego
     public async getGame(req: Request, res: Response): Promise<void> {
+        try {
+            const games = await gameModel.find({ uid: { $regex: req.body.uid } });
+            res.json({
+                games
+            });
+        } catch (e) {
+            console.log(e);
+            res.json({ errorGame: e });
+        }
         const game = await gameModel.findById(req.body.gid);
         res.json({
             game
         });
     }
-    //getGame for id
+
+    //Juegos por usuario
     public async getGamesUid(req: Request, res: Response): Promise<void> {
-        const games = await gameModel.find({ uid: { $regex: req.body.uid } });
-        res.json({
-            games
-        });
+        try {
+            const games = await gameModel.find({ uid: { $regex: req.body.uid } });
+            res.json({
+                games
+            });
+        } catch (e) {
+            console.log(e);
+            res.json({ errorUgames: e });
+        }
     }
 
+    //Validar content-type de la imagen y subirla al servidor
     public async validateFile(req: Request, res: Response, next: NextFunction) {
-        try {           
-            const error = validationResult(req);
-            if (error.isEmpty()) {
-                await validete(req, res, async () => {
-                    const bufferFile = await filetype.fromBuffer(req.file.buffer);
+        try {
+            await validete(req, res, async () => {
 
-                    let contentType: String[] = [extImage.jpeg, extImage.png, extImage.jpg];
+                const bufferFile = await filetype.fromBuffer(req.file.buffer);
+                let contentType: String[] = [extImage.jpeg, extImage.png, extImage.jpg];
 
-                    let isEquals: Boolean = false;
-                    contentType.forEach((type) => {
-                        if (type === bufferFile?.mime) {
-                            isEquals = true;
-                            return;
-                        }
-                    });
-
-                    if (isEquals) {
-                        await fs.writeFile(path.join(process.cwd(), 'uploads', req.file.originalname), req.file.buffer);
-                    } else {
-                        return res.status(500).send('El formato del archivo no es valido');
+                let isEquals: Boolean = false;
+                contentType.forEach((type) => {
+                    if (type === bufferFile?.mime) {
+                        isEquals = true;
+                        return;
                     }
-                    next();
                 });
-            } else {
-                console.log(error);
-                res.json({ errorInput: error });
-            }
+
+                if (isEquals) {
+                    await fs.writeFile(path.join(process.cwd(), 'uploads', req.file.originalname), req.file.buffer);
+                } else {
+                    return res.status(500).send('El formato del archivo no es valido');
+                }
+                next();
+            });
         } catch (e) {
             console.log(e);
             res.json({ errorValidate: e });
         }
     }
 
-    //CreateGame
+    //Crear juego
     public async createGame(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
@@ -106,10 +122,10 @@ class GameController {
         }
     }
 
-    //deleteGame for id
+    //Eliminar juego por id
     public async deleteGame(req: Request, res: Response): Promise<void> {
         try {
-            const game = await gameModel.findByIdAndDelete(req.body.gid);
+            await gameModel.findByIdAndDelete(req.body.gid);
             res.json({
                 message: "Este juego fue eliminado con éxito",
             })
@@ -119,12 +135,12 @@ class GameController {
             })
         }
     }
-    //updateGame for id
+    //Actualizar juego
     public async updateGame(req: Request, res: Response): Promise<void> {
         try {
-            const game = await gameModel.findByIdAndUpdate(req.body.gid, req.body);
+            const game = await gameModel.findByIdAndUpdate(req.body.gid, req.body, { new: true });
             res.json({
-                message: "Este juego fue actualizado con éxito"
+                game
             })
         } catch (error) {
             res.json({

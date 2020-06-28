@@ -18,7 +18,7 @@ const config_1 = require("../config/config");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const express_validator_1 = require("express-validator");
 class UserController {
-    //Login
+    //Iniciar sesión y generar token
     login(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -43,7 +43,7 @@ class UserController {
                             }
                         }
                         else {
-                            res.json({ auth: false, msg: 'usuario no encontrado' });
+                            res.json({ auth: false, msg: 'Usuario no encontrado' });
                         }
                     }));
                 }
@@ -59,7 +59,7 @@ class UserController {
             }
         });
     }
-    //Register
+    //Registrar usuario y generar token
     register(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -89,7 +89,7 @@ class UserController {
             }
         });
     }
-    //getUser
+    //Información del usuario
     getUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -105,14 +105,20 @@ class UserController {
             }
         });
     }
-    //getUser
+    //Ver todos usuarios (nombre, email)
     getUsers(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const users = yield user_model_1.default.find();
-                res.json({
-                    users
-                });
+                const listUsers = yield user_model_1.default.find();
+                let users = [];
+                for (let x of listUsers) {
+                    const user = {
+                        uname: x.uname,
+                        uemail: x.uemail
+                    };
+                    users.push(user);
+                }
+                res.json({ users });
             }
             catch (error) {
                 res.json({
@@ -121,7 +127,7 @@ class UserController {
             }
         });
     }
-    //Update user
+    //Actualizar usuario
     updateUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -148,7 +154,7 @@ class UserController {
             }
         });
     }
-    //Delete user
+    //Eliminar usuario (tambien se eliminan sus juegos)
     deleteUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -163,17 +169,6 @@ class UserController {
             catch (error) {
                 res.json({
                     deleteError: error,
-                });
-            }
-        });
-    }
-    logout(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-            }
-            catch (error) {
-                res.json({
-                    deleteSession: error,
                 });
             }
         });

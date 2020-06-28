@@ -15,52 +15,60 @@ class GameRouter {
     }
     config() {
         //Nuevo Juego 
-        this.router.get(utilities_1.Routers.gamecreate, express_validator_1.body(utilities_1.inputGame.name)
+        this.router.get(utilities_1.Routers.gamecreate, 
+        /*body(inputGame.name)
             .exists()
             .notEmpty()
             .withMessage('El paramatro nombre del juego es requerido')
-            .matches(utilities_1.regexField.gname, "i")
+            .matches(regexField.gname, "i")
             .withMessage('El Nombre del juego no es valido')
             .trim()
-            .escape(), express_validator_1.body(utilities_1.inputGame.description)
+            .escape(),
+        body(inputGame.description)
             .exists()
             .notEmpty()
             .withMessage('El paramatro descripción es requerido')
-            .matches(utilities_1.regexField.gdescription, "i")
+            .matches(regexField.gdescription, "i")
             .withMessage('La descripción no es valido')
             .trim()
-            .escape(), express_validator_1.body(utilities_1.inputGame.gender)
+            .escape(),
+        body(inputGame.gender)
             .exists()
             .notEmpty()
             .withMessage('El paramatro genero es requerido')
-            .matches(utilities_1.regexField.ggender, "i")
+            .matches(regexField.ggender, "i")
             .withMessage('El genero no es valido')
             .trim()
-            .escape(), express_validator_1.body(utilities_1.inputGame.console)
+            .escape(),
+            body(inputGame.console)
             .exists()
             .notEmpty()
             .withMessage('El paramatro consola es requerido')
-            .matches(utilities_1.regexField.gconsole, "i")
+            .matches(regexField.gconsole, "i")
             .withMessage('La consola no es valida')
             .trim()
-            .escape(), express_validator_1.body(utilities_1.inputGame.requirements)
+            .escape(),
+            body(inputGame.requirements)
             .exists()
             .notEmpty()
             .withMessage('El paramatro requerimientos es requerido')
-            .matches(utilities_1.regexField.grequirements, "i")
+            .matches(regexField.grequirements, "i")
             .withMessage('Los requirements no son validos')
             .trim()
-            .escape(), express_validator_1.body(utilities_1.inputGame.author)
+            .escape(),
+            body(inputGame.author)
             .exists()
             .notEmpty()
             .withMessage('El paramatro autor es requerido')
-            .matches(utilities_1.regexField.gauthor, "i")
+            .matches(regexField.gauthor, "i")
             .withMessage('El autor no es valido')
             .trim()
-            .escape(), express_validator_1.body(utilities_1.inputGame.image)
+            .escape(),
+            body(inputGame.image)
             .exists()
             .notEmpty()
-            .withMessage('El paramatro imagen es requerido'), game_controller_1.default.validateFile, checkToken_1.default, game_controller_1.default.createGame);
+            .withMessage('El paramatro imagen es requerido')*/
+        game_controller_1.default.validateFile, checkToken_1.default, game_controller_1.default.createGame);
         //Todos los Juegos
         this.router.get(utilities_1.Routers.games, checkToken_1.default, game_controller_1.default.getGames);
         //Juegos del Usuario (por id)

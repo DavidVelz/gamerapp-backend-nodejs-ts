@@ -79,8 +79,6 @@ class UserRouter{
         //Actualizar Usuario (por id)
         this.router.get(Routers.userupdate, checkToken, userController.updateUser);
 
-        //Cerrar sesión
-        this.router.get(Routers.logout, checkToken, userController.logout);
     }
 }
 const userRouter = new UserRouter();

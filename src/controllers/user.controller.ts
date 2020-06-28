@@ -1,17 +1,17 @@
-import { Request, Response, NextFunction, Router, Errback } from 'express'
-import userModel, { User } from '../models/user.model'
-import gameModel, { Game } from '../models/game.model'
-import { env } from '../config/config'
-import jwt from 'jsonwebtoken'
-import { validationResult } from "express-validator"
-import session from 'express-session';
+import { Request, Response } from 'express';
+import userModel, { User } from '../models/user.model';
+import gameModel from '../models/game.model';
+import { env } from '../config/config';
+import jwt from 'jsonwebtoken';
+import { validationResult } from "express-validator";
+
 class UserController {
 
-    
-    //Login
+
+    //Iniciar sesión y generar token
     public async login(req: Request, res: Response): Promise<void> {
         try {
-            console.log(JSON.stringify(req.body));
+
             const error = validationResult(req);
 
             if (error.isEmpty()) {
@@ -20,7 +20,7 @@ class UserController {
                     .then(async (user) => {
                         if (user) {
                             const equals = await user.comparePassword(upass);
-                            if (equals) {                                
+                            if (equals) {
                                 const token = jwt.sign({ id: user._id }, env.mysecret, {
                                     expiresIn: env.expiresIn
                                 });
@@ -33,7 +33,7 @@ class UserController {
                                 });
                             }
                         } else {
-                            res.json({ auth: false, msg: 'usuario no encontrado' });
+                            res.json({ auth: false, msg: 'Usuario no encontrado' });
                         }
                     });
             } else {
@@ -42,11 +42,11 @@ class UserController {
                 })
             }
         } catch (e) {
-            console.log(e)
+            console.log(e);
             res.status(500).send('Problemas autenticando este usuario');
         }
     }
-    //Register
+    //Registrar usuario y generar token
     public async register(req: Request, res: Response): Promise<void> {
         try {
             const error = validationResult(req);
@@ -69,12 +69,12 @@ class UserController {
                 res.json({ errorRegex: error })
             }
         } catch (e) {
-            console.log(e)
+            console.log(e);
             res.status(500).send('Problemas registrando el usuario');
         }
     }
 
-    //getUser
+    //Información del usuario
     public async getUser(req: Request, res: Response): Promise<void> {
         try {
             const user = await userModel.findById(req.body.uid);
@@ -88,21 +88,28 @@ class UserController {
         }
 
     }
-    //getUser
+
+    //Ver todos usuarios (nombre, email)
     public async getUsers(req: Request, res: Response): Promise<void> {
         try {
-            const users = await userModel.find();
-            res.json({
-                users
-            });
+            const listUsers: User[] = await userModel.find();
+
+            let users: any[] = [];
+            for(let x of listUsers){
+                const user = {
+                    uname: x.uname,
+                    uemail: x.uemail
+                }
+                users.push(user);               
+            }
+            res.json({ users });                
         } catch (error) {
             res.json({
                 getUsersError: error
             })
         }
-
     }
-    //Update user
+    //Actualizar usuario
     public async updateUser(req: Request, res: Response): Promise<void> {
         try {
             const _id = req.body.uid;
@@ -125,10 +132,9 @@ class UserController {
                 updateError: error
             })
         }
-
     }
 
-    //Delete user
+    //Eliminar usuario (tambien se eliminan sus juegos)
     public async deleteUser(req: Request, res: Response): Promise<void> {
         try {
             const user = await userModel.findByIdAndDelete(req.body.uid);
@@ -143,17 +149,6 @@ class UserController {
                 deleteError: error,
             })
         }
-    }
-
-    public async logout(req: Request, res: Response) {
-        try {
-        
-        } catch (error) {
-            res.json({
-                deleteSession: error,
-            })
-        }
-                
     }
 }
 

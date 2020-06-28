@@ -2,8 +2,7 @@ import mongoose, { model, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 
-export interface User extends mongoose.Document {
-
+export interface User extends mongoose.Document {    
     encryptPassword(upass: string): Promise<string>;
     comparePassword(upass: string): Promise<boolean>;
     uname: string;
@@ -16,7 +15,7 @@ const UserSchema = new Schema({
     uname: { type: String, required: true },
     uemail: { type: String, required: true, unique:true },
     upass: { type: String, required: true },
-    uage: Number,
+    uage: Number
 });
 
 UserSchema.methods.encryptPassword = async (upass:string) : Promise<string> => {

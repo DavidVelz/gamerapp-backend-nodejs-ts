@@ -1,4 +1,4 @@
-import multer from 'multer'
+import multer from 'multer';
 import { inputGame } from '../util/utilities';
 
 export default multer({       
