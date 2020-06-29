@@ -7,13 +7,10 @@ import { validationResult } from "express-validator";
 
 class UserController {
 
-
     //Iniciar sesión y generar token
     public async login(req: Request, res: Response): Promise<void> {
         try {
-
             const error = validationResult(req);
-
             if (error.isEmpty()) {
                 const { uemail, upass } = req.body;
                 await userModel.findOne({ uemail: { $regex: uemail } })
@@ -35,11 +32,15 @@ class UserController {
                         } else {
                             res.json({ auth: false, msg: 'Usuario no encontrado' });
                         }
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                        res.status(500).send('Error obeniendo el usuario');
                     });
             } else {
                 res.json({
                     errorRegex: error
-                })
+                });
             }
         } catch (e) {
             console.log(e);
@@ -66,7 +67,7 @@ class UserController {
                 });
                 res.json({ auth: true, token });
             } else {
-                res.json({ errorRegex: error })
+                res.json({ errorRegex: error });
             }
         } catch (e) {
             console.log(e);
@@ -81,10 +82,9 @@ class UserController {
             res.json({
                 user
             });
-        } catch (error) {
-            res.json({
-                getUserError: error
-            })
+        } catch (e) {
+            console.log(e);
+            res.status(500).send('Error obteniendo el usuario');
         }
 
     }
@@ -93,7 +93,6 @@ class UserController {
     public async getUsers(req: Request, res: Response): Promise<void> {
         try {
             const listUsers: User[] = await userModel.find();
-
             let users: any[] = [];
             for(let x of listUsers){
                 const user = {
@@ -103,10 +102,9 @@ class UserController {
                 users.push(user);               
             }
             res.json({ users });                
-        } catch (error) {
-            res.json({
-                getUsersError: error
-            })
+        } catch (e) {
+            console.log(e);
+            res.status(500).send('Error obteniendo los usuarios');
         }
     }
     //Actualizar usuario
@@ -114,7 +112,7 @@ class UserController {
         try {
             const _id = req.body.uid;
             const { uname, uemail, upass, uage } = req.body;
-            var userUpdate: User = new userModel({
+            let userUpdate: User = new userModel({
                 _id,
                 uname,
                 uemail,
@@ -126,11 +124,10 @@ class UserController {
             res.json({
                 message: "Usuario actualizado con éxito",
                 user: userUp
-            })
-        } catch (error) {
-            res.json({
-                updateError: error
-            })
+            });
+        } catch (e) {
+            console.log(e);
+            res.status(500).send('Error actualizando el usuario');
         }
     }
 
@@ -143,11 +140,23 @@ class UserController {
             }
             res.json({
                 message: "Este usuario fue eliminado con éxito",
-            })
-        } catch (error) {
+            });
+        } catch (e) {
+            console.log(e);
+            res.status(500).send('Error eliminando el usuario');
+        }
+    }
+
+    //Eliminar Todos los usuarios
+    public async deleteUsers(req: Request, res: Response): Promise<void> {
+        try {
+            await userModel.deleteMany({});
             res.json({
-                deleteError: error,
-            })
+                message: "Usuarios eliminados con éxito",
+            });
+        } catch (e) {
+            console.log(e);
+            res.status(500).send('Error eliminando los usuarios');
         }
     }
 }

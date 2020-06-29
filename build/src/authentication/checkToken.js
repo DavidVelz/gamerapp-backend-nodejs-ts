@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = require("../config/config");
+//Obtener el token para verificar al usuario 
 function checkToken(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

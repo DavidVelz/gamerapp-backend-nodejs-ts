@@ -2,14 +2,14 @@ import { Request, Response, NextFunction} from 'express';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/config';
 
-
 export interface IDecoded {
     id: string;
     iat: number;
 } 
 
+//Obtener el token para verificar al usuario 
 async function checkToken(req:Request, res:Response, next:NextFunction) {
-    try {        
+    try {  
         const tokenString = req.headers.authorization as String;
         const token = tokenString.split(" ")[1];        
         if (!token) { 
@@ -17,11 +17,11 @@ async function checkToken(req:Request, res:Response, next:NextFunction) {
         }
         
         // Decodificar el token para obtener el id de usuario
-        const decoded = await jwt.verify(token, env.mysecret) as IDecoded; 
-        req.body.uid = decoded.id;         
+        const decoded = await jwt.verify(token, env.mysecret) as IDecoded;         
+        req.body.uid = decoded.id;
         next();
     } catch (e) {
-        console.log(e)
+        console.log(e);
             res.status(500).send('Problemas para validar un usuario');
     }   
 }

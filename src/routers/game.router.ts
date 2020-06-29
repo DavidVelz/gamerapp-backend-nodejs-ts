@@ -14,6 +14,8 @@ class GameRouter {
     }
 
     config(): void {
+        //Página inicio
+        this.router.get(Routers.home, checkToken, gameController.getGames);
         //Nuevo Juego 
         this.router.get(Routers.gamecreate, 
             /*body(inputGame.name)
@@ -88,7 +90,10 @@ class GameRouter {
         this.router.get(Routers.gamedelete, checkToken, gameController.deleteGame);
 
         //Actualizar Juegos (por id)
-        this.router.get(Routers.gameupdate, checkToken, gameController.updateGame);
+        this.router.get(Routers.gameupdate,gameController.validateFile, checkToken, gameController.updateGame);
+
+        //Eliminar todos los juegos
+        this.router.get(Routers.gamesdelete, checkToken, gameController.deleteGames);
     }
 }
 

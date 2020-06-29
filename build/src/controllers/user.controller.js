@@ -45,7 +45,11 @@ class UserController {
                         else {
                             res.json({ auth: false, msg: 'Usuario no encontrado' });
                         }
-                    }));
+                    }))
+                        .catch((e) => {
+                        console.log(e);
+                        res.status(500).send('Error obeniendo el usuario');
+                    });
                 }
                 else {
                     res.json({
@@ -98,10 +102,9 @@ class UserController {
                     user
                 });
             }
-            catch (error) {
-                res.json({
-                    getUserError: error
-                });
+            catch (e) {
+                console.log(e);
+                res.status(500).send('Error obteniendo el usuario');
             }
         });
     }
@@ -120,10 +123,9 @@ class UserController {
                 }
                 res.json({ users });
             }
-            catch (error) {
-                res.json({
-                    getUsersError: error
-                });
+            catch (e) {
+                console.log(e);
+                res.status(500).send('Error obteniendo los usuarios');
             }
         });
     }
@@ -147,10 +149,9 @@ class UserController {
                     user: userUp
                 });
             }
-            catch (error) {
-                res.json({
-                    updateError: error
-                });
+            catch (e) {
+                console.log(e);
+                res.status(500).send('Error actualizando el usuario');
             }
         });
     }
@@ -166,10 +167,9 @@ class UserController {
                     message: "Este usuario fue eliminado con éxito",
                 });
             }
-            catch (error) {
-                res.json({
-                    deleteError: error,
-                });
+            catch (e) {
+                console.log(e);
+                res.status(500).send('Error eliminando el usuario');
             }
         });
     }

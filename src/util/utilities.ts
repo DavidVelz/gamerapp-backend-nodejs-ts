@@ -15,7 +15,7 @@ export const regexField = {
 export const extImage = {
   png: "image/png",
   jpg: "image/jpg",
-  jpeg: "image/jpeg"
+  jpeg: "image/jpeg"   
 }
 
 export const inputUser = {
@@ -43,13 +43,15 @@ export const Routers = {
   user: "/user",
   users: "/users",
   userdelete: "/deleteuser",
-  userupdate: "/updateuser",
-  logout: "/logout",
+  userupdate: "/updateuser",  
+  usersdelete: "/deleteusers",
 
+  home: "/home",
   games: "/games",
   ugames: "/ugames",
   gamecreate: "/creategame",
   gameid: "/game",
   gamedelete: "/deletegame",
   gameupdate: "/updategame",
+  gamesdelete: "/deletegames",
 } 

@@ -73,11 +73,14 @@ class UserRouter{
         //Perfil
         this.router.get(Routers.user, checkToken, userController.getUser);
 
-        //Eliminar Usuario (por id)
+        //Eliminar usuario (por id)
         this.router.get(Routers.userdelete, checkToken, userController.deleteUser);
 
-        //Actualizar Usuario (por id)
+        //Actualizar usuario (por id)
         this.router.get(Routers.userupdate, checkToken, userController.updateUser);
+
+        //Eliminar todos los usuarios
+        this.router.get(Routers.usersdelete, checkToken, userController.deleteUsers);
 
     }
 }

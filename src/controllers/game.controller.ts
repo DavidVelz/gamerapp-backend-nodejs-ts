@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction, Router } from 'express';
 import gameModel, { Game } from '../models/game.model';
-import validete from '../util/fileBuffer';
+import validateFile from '../util/fileBuffer';
 import filetype from 'file-type';
-import { extImage } from '../util/utilities';
+import { extImage as ImageType } from '../util/utilities';
 import { env } from '../config/config';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -19,29 +19,26 @@ class GameController {
         try {
             const games = await gameModel.find();
             res.json({
+                msg: "Bienvenid@s a GamersApp",
                 games
             });
         } catch (e) {
             console.log(e);
-            res.json({ errorGames: e });
+            res.status(500).send('Error obteniendo todos los juegos');
         }
     }
 
     //Devolver un juego
     public async getGame(req: Request, res: Response): Promise<void> {
         try {
-            const games = await gameModel.find({ uid: { $regex: req.body.uid } });
+            const game = await gameModel.findById(req.body.gid);
             res.json({
-                games
+                game
             });
         } catch (e) {
             console.log(e);
-            res.json({ errorGame: e });
+            res.status(500).send('Error obteniendo el juego');
         }
-        const game = await gameModel.findById(req.body.gid);
-        res.json({
-            game
-        });
     }
 
     //Juegos por usuario
@@ -53,18 +50,17 @@ class GameController {
             });
         } catch (e) {
             console.log(e);
-            res.json({ errorUgames: e });
+            res.status(500).send('Error obteniendo juegos para este usuario');
         }
     }
 
-    //Validar content-type de la imagen y subirla al servidor
+    //Validar número mágico de la imagen y subirla al servidor
     public async validateFile(req: Request, res: Response, next: NextFunction) {
         try {
-            await validete(req, res, async () => {
-
+            await validateFile(req, res, async () => {
+                const gid = req.body.gid;                
                 const bufferFile = await filetype.fromBuffer(req.file.buffer);
-                let contentType: String[] = [extImage.jpeg, extImage.png, extImage.jpg];
-
+                let contentType: String[] = [ImageType.jpeg, ImageType.png, ImageType.jpg];
                 let isEquals: Boolean = false;
                 contentType.forEach((type) => {
                     if (type === bufferFile?.mime) {
@@ -74,15 +70,17 @@ class GameController {
                 });
 
                 if (isEquals) {
-                    await fs.writeFile(path.join(process.cwd(), 'uploads', req.file.originalname), req.file.buffer);
+                    if (gid === undefined) {
+                        await fs.writeFile(path.join(process.cwd(), 'uploads', req.file.originalname), req.file.buffer);
+                    }
                 } else {
-                    return res.status(500).send('El formato del archivo no es valido');
+                    return res.status(415).send('El formato del archivo no es valido');
                 }
                 next();
             });
         } catch (e) {
             console.log(e);
-            res.json({ errorValidate: e });
+            res.status(500).send('Problemas validando la el archivo');
         }
     }
 
@@ -112,40 +110,90 @@ class GameController {
                 uid
             });
 
-            const db = await game.save();
+            const newGame = await game.save();
             res.json({
-                game: db
+                game: newGame
             });
-        } catch (error) {
-            //Eliminar la imagen en caso de errores
-            res.json({ errorDb: error })
+        } catch (e) {
+            console.log(e);
+            res.status(500).send('Error registrando el juego');
         }
     }
 
     //Eliminar juego por id
     public async deleteGame(req: Request, res: Response): Promise<void> {
-        try {
-            await gameModel.findByIdAndDelete(req.body.gid);
+        try {                     
+            const currentGame = await gameModel.findById(req.body.gid);
+            await gameModel.findByIdAndDelete(req.body.gid);            
+            if(currentGame?.gimage !== undefined){           
+            await fs.unlink(path.join(process.cwd(), currentGame?.gimage));
+        }
             res.json({
                 message: "Este juego fue eliminado con éxito",
-            })
-        } catch (error) {
-            res.json({
-                messagerror: error,
-            })
+            });
+        } catch (e) {
+            console.log(e);
+            res.status(500).send('Error eliminando el juego');
         }
     }
     //Actualizar juego
     public async updateGame(req: Request, res: Response): Promise<void> {
         try {
-            const game = await gameModel.findByIdAndUpdate(req.body.gid, req.body, { new: true });
+            const _id = req.body.gid;
+            const {
+                gname,
+                gdescription,
+                ggender,
+                gconsole,
+                grequirements,
+                gauthor,
+                uid
+            } = req.body;
+
+            let urlImage = null;
+            const currentGame = await gameModel.findById(_id);
+            urlImage = `/${env.desUpload}/${req.file.originalname}`;
+
+            if (urlImage !== currentGame?.gimage 
+                && currentGame?.gimage !== undefined) {                
+                await fs.unlink(path.join(process.cwd(), currentGame?.gimage));
+                fs.writeFile(path.join(process.cwd(), 'uploads', req.file.originalname), req.file.buffer);
+            }
+
+            const newGame: Game = new gameModel({
+                _id,
+                gname,
+                gdescription,
+                ggender,
+                gconsole,
+                grequirements,
+                gauthor,
+                gimage: urlImage,
+                uid
+            });
+
+            const game = await gameModel.findByIdAndUpdate(req.body.gid, newGame, { new: true });
             res.json({
-                game
-            })
-        } catch (error) {
+                message: "Juego actualizado con éxito",
+                user: game
+            });
+        } catch (e) {
+            console.log(e);
+            res.status(500).send('Error actualizando el juego');
+        }
+    }
+
+    //Eliminar Todos los juegos
+    public async deleteGames(req: Request, res: Response): Promise<void> {
+        try {
+            await gameModel.deleteMany({});
+            await fs.rmdir(path.join(process.cwd(), 'uploads'),{ recursive: true });
             res.json({
-                messagerror: error
-            })
+                message: "Juegos eliminados con éxito",
+            });
+        } catch (e) {
+            console.log(e);
+            res.status(500).send('Error eliminando los juegos');
         }
     }
 }

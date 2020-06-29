@@ -35,7 +35,7 @@ class GameController {
             }
             catch (e) {
                 console.log(e);
-                res.json({ errorGames: e });
+                res.status(500).send('Error obteniendo todos los juegos');
             }
         });
     }
@@ -43,19 +43,15 @@ class GameController {
     getGame(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const games = yield game_model_1.default.find({ uid: { $regex: req.body.uid } });
+                const game = yield game_model_1.default.findById(req.body.gid);
                 res.json({
-                    games
+                    game
                 });
             }
             catch (e) {
                 console.log(e);
-                res.json({ errorGame: e });
+                res.status(500).send('Error obteniendo el juego');
             }
-            const game = yield game_model_1.default.findById(req.body.gid);
-            res.json({
-                game
-            });
         });
     }
     //Juegos por usuario
@@ -69,7 +65,7 @@ class GameController {
             }
             catch (e) {
                 console.log(e);
-                res.json({ errorUgames: e });
+                res.status(500).send('Error obteniendo juegos para este usuario');
             }
         });
     }
@@ -91,14 +87,14 @@ class GameController {
                         yield fs_1.promises.writeFile(path_1.default.join(process.cwd(), 'uploads', req.file.originalname), req.file.buffer);
                     }
                     else {
-                        return res.status(500).send('El formato del archivo no es valido');
+                        return res.status(415).send('El formato del archivo no es valido');
                     }
                     next();
                 }));
             }
             catch (e) {
                 console.log(e);
-                res.json({ errorValidate: e });
+                res.status(500).send('Problemas validando la el archivo');
             }
         });
     }
@@ -123,9 +119,9 @@ class GameController {
                     game: db
                 });
             }
-            catch (error) {
-                //Eliminar la imagen en caso de errores
-                res.json({ errorDb: error });
+            catch (e) {
+                console.log(e);
+                res.status(500).send('Error registrando el juego');
             }
         });
     }
@@ -138,10 +134,9 @@ class GameController {
                     message: "Este juego fue eliminado con éxito",
                 });
             }
-            catch (error) {
-                res.json({
-                    messagerror: error,
-                });
+            catch (e) {
+                console.log(e);
+                res.status(500).send('Error eliminando el juego');
             }
         });
     }
@@ -154,10 +149,9 @@ class GameController {
                     game
                 });
             }
-            catch (error) {
-                res.json({
-                    messagerror: error
-                });
+            catch (e) {
+                console.log(e);
+                res.status(500).send('Error actualizando el juego');
             }
         });
     }
