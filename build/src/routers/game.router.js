@@ -14,6 +14,8 @@ class GameRouter {
         this.config();
     }
     config() {
+        //Página inicio
+        this.router.get(utilities_1.Routers.home, checkToken_1.default, game_controller_1.default.getGames);
         //Nuevo Juego 
         this.router.get(utilities_1.Routers.gamecreate, 
         /*body(inputGame.name)
@@ -81,7 +83,9 @@ class GameRouter {
         //Eliminar Juegos (por id)
         this.router.get(utilities_1.Routers.gamedelete, checkToken_1.default, game_controller_1.default.deleteGame);
         //Actualizar Juegos (por id)
-        this.router.get(utilities_1.Routers.gameupdate, checkToken_1.default, game_controller_1.default.updateGame);
+        this.router.get(utilities_1.Routers.gameupdate, game_controller_1.default.validateFile, checkToken_1.default, game_controller_1.default.updateGame);
+        //Eliminar todos los juegos
+        this.router.get(utilities_1.Routers.gamesdelete, checkToken_1.default, game_controller_1.default.deleteGames);
     }
 }
 const gameRouter = new GameRouter();

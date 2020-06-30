@@ -67,10 +67,12 @@ class UserRouter {
         this.router.get(utilities_1.Routers.users, checkToken_1.default, user_controller_1.default.getUsers);
         //Perfil
         this.router.get(utilities_1.Routers.user, checkToken_1.default, user_controller_1.default.getUser);
-        //Eliminar Usuario (por id)
+        //Eliminar usuario (por id)
         this.router.get(utilities_1.Routers.userdelete, checkToken_1.default, user_controller_1.default.deleteUser);
-        //Actualizar Usuario (por id)
+        //Actualizar usuario (por id)
         this.router.get(utilities_1.Routers.userupdate, checkToken_1.default, user_controller_1.default.updateUser);
+        //Eliminar todos los usuarios
+        this.router.get(utilities_1.Routers.usersdelete, checkToken_1.default, user_controller_1.default.deleteUsers);
     }
 }
 const userRouter = new UserRouter();

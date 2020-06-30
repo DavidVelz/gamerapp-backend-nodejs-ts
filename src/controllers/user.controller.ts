@@ -61,13 +61,14 @@ class UserController {
                 });
                 user.upass = await user.encryptPassword(upass);
                 const us = await user.save();
-
-                const token = jwt.sign({ id: user._id }, env.mysecret, {
-                    expiresIn: env.expiresIn
-                });
-                res.json({ auth: true, token });
-            } else {
-                res.json({ errorRegex: error });
+                if (us) {
+                    const token = jwt.sign({ id: user._id }, env.mysecret, {
+                        expiresIn: env.expiresIn
+                    });
+                    res.json({ auth: true, token });
+                } else {
+                    res.json({ errorRegex: error });
+                }
             }
         } catch (e) {
             console.log(e);
@@ -79,9 +80,11 @@ class UserController {
     public async getUser(req: Request, res: Response): Promise<void> {
         try {
             const user = await userModel.findById(req.body.uid);
-            res.json({
-                user
-            });
+            if (user) {
+                res.json({
+                    user
+                });
+            }
         } catch (e) {
             console.log(e);
             res.status(500).send('Error obteniendo el usuario');
@@ -94,14 +97,14 @@ class UserController {
         try {
             const listUsers: User[] = await userModel.find();
             let users: any[] = [];
-            for(let x of listUsers){
+            for (let x of listUsers) {
                 const user = {
                     uname: x.uname,
                     uemail: x.uemail
                 }
-                users.push(user);               
+                users.push(user);
             }
-            res.json({ users });                
+            res.json({ users });
         } catch (e) {
             console.log(e);
             res.status(500).send('Error obteniendo los usuarios');
@@ -121,10 +124,12 @@ class UserController {
             });
             userUpdate.upass = await userUpdate.encryptPassword(req.body.upass);
             const userUp = await userModel.findByIdAndUpdate(req.body.uid, userUpdate, { new: true });
-            res.json({
-                message: "Usuario actualizado con éxito",
-                user: userUp
-            });
+            if (userUp) {
+                res.json({
+                    message: "Usuario actualizado con éxito",
+                    user: userUp
+                });
+            }
         } catch (e) {
             console.log(e);
             res.status(500).send('Error actualizando el usuario');

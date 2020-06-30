@@ -135,7 +135,7 @@ class UserController {
             try {
                 const _id = req.body.uid;
                 const { uname, uemail, upass, uage } = req.body;
-                var userUpdate = new user_model_1.default({
+                let userUpdate = new user_model_1.default({
                     _id,
                     uname,
                     uemail,
@@ -170,6 +170,21 @@ class UserController {
             catch (e) {
                 console.log(e);
                 res.status(500).send('Error eliminando el usuario');
+            }
+        });
+    }
+    //Eliminar Todos los usuarios
+    deleteUsers(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield user_model_1.default.deleteMany({});
+                res.json({
+                    message: "Usuarios eliminados con éxito",
+                });
+            }
+            catch (e) {
+                console.log(e);
+                res.status(500).send('Error eliminando los usuarios');
             }
         });
     }
