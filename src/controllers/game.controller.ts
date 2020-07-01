@@ -118,19 +118,17 @@ class GameController {
         }
     }
 
-    //Eliminar juego por id
+    //Eliminar juego por id       
     public async deleteGame(req: Request, res: Response): Promise<void> {
         try {
-            const currentGame = await gameModel.findById(req.body.gid);
-            const game = await gameModel.findByIdAndDelete(req.body.gid);
-            if (game) {
+            const currentGame = await gameModel.findByIdAndDelete(req.body.gid);
+            if (currentGame) {
                 if (currentGame?.gimage !== undefined) {
-                    if (filesys.existsSync(path.join(process.cwd(), currentGame?.gimage))) {
-                        await fs.unlink(path.join(process.cwd(), currentGame?.gimage));
-                    } else {
+                    if (!handlerfile.deleteFile(currentGame?.gimage)) {
                         res.json({
-                            message: "El archivo del juego no existe",
+                            message: "El juego fue elimando, pero no tiene imagen",
                         });
+                        return;
                     }
                 }
                 res.json({
@@ -163,7 +161,7 @@ class GameController {
                     && currentGame?.gimage !== undefined) {
                     const currentPath = await handlerfile.currentPatch(currentGame?.gimage);
                     const newPath = await handlerfile.newPatch(req.file.originalname);
-                    await handlerfile.deleteFileUpload(currentPath, newPath, req.file.buffer);
+                    await handlerfile.updateFileUpload(currentPath, newPath, req.file.buffer);
                 }
                 res.json({
                     message: "Juego actualizado con éxito",
@@ -198,3 +196,5 @@ class GameController {
 
 const gameController = new GameController();
 export default gameController;
+
+

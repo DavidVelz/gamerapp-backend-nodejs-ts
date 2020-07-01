@@ -29,6 +29,6 @@ app.use(gameController);
 
 // Archivos estaticos
 app.use('/uploads', express.static(path.resolve('uploads')));
-
+app.use('/assets', express.static(path.resolve('assets')));
 // Inicializar el servidor
 app.listen(app.get('port'), () => {});

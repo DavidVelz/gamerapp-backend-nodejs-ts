@@ -18,7 +18,7 @@ const GameSchema = new Schema({
     gconsole: { type: String, required: true },
     grequirements: { type: String, required: true },
     gauthor: String,
-    gimage: String,
+    gimage: { type: String, required: true },
     uid : { type: String, required: true }
 });
 
