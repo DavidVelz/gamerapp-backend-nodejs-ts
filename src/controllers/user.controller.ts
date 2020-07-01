@@ -66,9 +66,9 @@ class UserController {
                         expiresIn: env.expiresIn
                     });
                     res.json({ auth: true, token });
-                } else {
-                    res.json({ errorRegex: error });
-                }
+                } 
+            }else {
+                res.json({ errorRegex: error });
             }
         } catch (e) {
             console.log(e);
